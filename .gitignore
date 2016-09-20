@@ -4,4 +4,7 @@ readme.pdf
 
 # Datasets to ignore 
 ImageData*
+FeatureExtractor/*
+ImageSeach_demo/dataset*
+ImageSeach_demo/queries*
 ImageSeach_demo/example.png
