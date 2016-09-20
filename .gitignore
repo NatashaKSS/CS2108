@@ -1,0 +1,7 @@
+# Ignore assignment requirements
+Assigm1--MMRetrieval-CS2108-Sep2016.doc
+readme.pdf
+
+# Datasets to ignore 
+ImageData*
+ImageSeach_demo/example.png
