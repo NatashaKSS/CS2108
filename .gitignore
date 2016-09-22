@@ -2,9 +2,13 @@
 Assigm1--MMRetrieval-CS2108-Sep2016.doc
 readme.pdf
 
-# Datasets to ignore 
+# Ignore datasets
 ImageData*
 FeatureExtractor/*
 ImageSeach_demo/dataset*
 ImageSeach_demo/queries*
+ImageSeach_demo/semanticFeature*
+
+# Ignore misc
 ImageSeach_demo/example.png
+*.mat
