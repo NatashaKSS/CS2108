@@ -1,6 +1,5 @@
 # import the necessary packages
-from pyimagesearch.colordescriptor import ColorDescriptor
-from pyimagesearch.searcher import Searcher
+from pyimagesearch.querylogic import QueryLogic
 import cv2
 from Tkinter import *
 import tkFileDialog
@@ -11,6 +10,7 @@ from PIL import Image, ImageTk
 class UI_class:
 
     def __init__(self, master, search_path):
+        self.querylogic = QueryLogic()
         self.search_path = search_path
         self.master = master
         topframe = Frame(self.master)
@@ -36,7 +36,7 @@ class UI_class:
         self.filename = tkFileDialog.askopenfile(
             title='Choose an Image File').name
         
-        self.get_image_attrs(self.filename)
+        self.image_attrs = self.querylogic.get_image_attrs(self.filename)
 
         # show query image
         image_file = Image.open(self.filename)
@@ -51,10 +51,10 @@ class UI_class:
         self.result_img_frame = Frame(self.master)
         self.result_img_frame.pack()
         
-        results = self.get_search_results()
+        results = self.querylogic.get_search_results(self.image_attrs)
 
         # show result pictures
-        COLUMNS = 5
+        COLUMNS = 4
         image_count = 0
         for (score, resultID) in results:
             # load the result image and display it
@@ -69,19 +69,7 @@ class UI_class:
 
         self.result_img_frame.mainloop()
     
-    def get_image_attrs(self, file_path):
-        # process query image to feature vector
-        # initialize the image descriptor
-        cd = ColorDescriptor((8, 12, 3))
-        # load the query image and describe it
-        query = cv2.imread(file_path)
-        self.queryfeatures = cd.describe(query)
-    
-    def get_search_results(self):
-        # perform the search
-        searcher = Searcher("index.csv")
-        results = searcher.search(self.queryfeatures)
-        return results
+
     
 
 
