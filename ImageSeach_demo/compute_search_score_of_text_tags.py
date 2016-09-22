@@ -1,6 +1,8 @@
 import sys
 import getopt
+import re
 import pickle
+import csv
 
 #======================================================================#
 # Program Description:
@@ -16,16 +18,23 @@ import pickle
 #
 # The path for the image query file is set after the -q flag.
 # The path for the postings file specified after the -p  flag should be the
-# postings file produced when you indexed the text_tags.
+# postings file produced when you indexed the training data's text_tags.
 #======================================================================#
 
 def compute_similarity():
     scores = {}
-    # Where do I get the text_tags for image queries?
+
 
 def load_postings():
     from_postings_file = open(postings_file, "r")
     return pickle.load(from_postings_file)
+
+def load_query_text_semantic_feature():
+    with open('semantic_feature_1000_classifications.csv', 'rb') as file:
+        reader = csv.reader(file)
+        query_classifications = list(reader)
+    file.close()
+    return query_classifications
 
 #======================================================================#
 # Interpretation of program arguments
@@ -60,6 +69,10 @@ if query_img_file == None or postings_file == None:
 #=====================================================#
 # Execution of Program
 #=====================================================#
+
+# Load query classification table for each semantic visual concept
+query_classifications = load_query_text_semantic_feature()
+print query_classifications
 
 # Load postings before processing search queries
 term_imgID_map = load_postings()
