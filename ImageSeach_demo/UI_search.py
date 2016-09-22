@@ -4,6 +4,7 @@ from pyimagesearch.searcher import Searcher
 import cv2
 from Tkinter import *
 import tkFileDialog
+import os
 from PIL import Image, ImageTk
 
 
@@ -34,13 +35,8 @@ class UI_class:
         from tkFileDialog import askopenfilename
         self.filename = tkFileDialog.askopenfile(
             title='Choose an Image File').name
-
-        # process query image to feature vector
-        # initialize the image descriptor
-        cd = ColorDescriptor((8, 12, 3))
-        # load the query image and describe it
-        query = cv2.imread(self.filename)
-        self.queryfeatures = cd.describe(query)
+        
+        self.get_image_attrs(self.filename)
 
         # show query image
         image_file = Image.open(self.filename)
@@ -54,10 +50,8 @@ class UI_class:
     def show_results_imgs(self):
         self.result_img_frame = Frame(self.master)
         self.result_img_frame.pack()
-
-        # perform the search
-        searcher = Searcher("index.csv")
-        results = searcher.search(self.queryfeatures)
+        
+        results = self.get_search_results()
 
         # show result pictures
         COLUMNS = 5
@@ -66,7 +60,7 @@ class UI_class:
             # load the result image and display it
             image_count += 1
             r, c = divmod(image_count - 1, COLUMNS)
-            im = Image.open(self.search_path + "/" + resultID)
+            im = Image.open(self.search_path + os.sep + resultID)
             resized = im.resize((100, 100), Image.ANTIALIAS)
             tkimage = ImageTk.PhotoImage(resized)
             myvar = Label(self.result_img_frame, image=tkimage)
@@ -74,6 +68,21 @@ class UI_class:
             myvar.grid(row=r, column=c)
 
         self.result_img_frame.mainloop()
+    
+    def get_image_attrs(self, file_path):
+        # process query image to feature vector
+        # initialize the image descriptor
+        cd = ColorDescriptor((8, 12, 3))
+        # load the query image and describe it
+        query = cv2.imread(file_path)
+        self.queryfeatures = cd.describe(query)
+    
+    def get_search_results(self):
+        # perform the search
+        searcher = Searcher("index.csv")
+        results = searcher.search(self.queryfeatures)
+        return results
+    
 
 
 root = Tk()
