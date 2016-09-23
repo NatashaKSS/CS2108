@@ -28,7 +28,7 @@ class UI_class:
                               command=self.show_results_imgs)
         self.cbutton.grid(row=1, column=3, padx = 10)
         self.cbutton.config(height=2, width=10)
-
+        downspace = Label(topframe).grid(row=2, columnspan=4)
 #text input
         label1 = Label(root, text="Text Input")
         E1 = Entry(root, bd=5)
@@ -42,9 +42,6 @@ class UI_class:
         label1.pack()
         E1.pack()
         self.submit.pack()
-
-        downspace = Label(topframe).grid(row=2, columnspan=4)
-
 
 
         self.master.mainloop()
