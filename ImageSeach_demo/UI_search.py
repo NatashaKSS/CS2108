@@ -18,13 +18,34 @@ class UI_class:
 
         # Buttons
         topspace = Label(topframe).grid(row=0, columnspan=2)
+
         self.bbutton = Button(topframe, text=" Choose an image ",
                               command=self.browse_query_img)
-        self.bbutton.grid(row=1, column=1)
+        self.bbutton.grid(row=1, column=1, padx = 10)
+        self.bbutton.config(height=2, width=20)
+
         self.cbutton = Button(topframe, text=" Search ",
                               command=self.show_results_imgs)
-        self.cbutton.grid(row=1, column=2)
-        downspace = Label(topframe).grid(row=3, columnspan=4)
+        self.cbutton.grid(row=1, column=3, padx = 10)
+        self.cbutton.config(height=2, width=10)
+
+#text input
+        label1 = Label(root, text="Text Input")
+        E1 = Entry(root, bd=5)
+        def getWord():
+            print E1.get()
+
+        self.submit = Button(root, text="Submit", command=getWord)
+        self.submit.grid(pady = 10)
+
+
+        label1.pack()
+        E1.pack()
+        self.submit.pack()
+
+        downspace = Label(topframe).grid(row=2, columnspan=4)
+
+
 
         self.master.mainloop()
 
