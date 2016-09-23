@@ -5,7 +5,9 @@ import glob
 
 #======================================================================#
 # Program Description:
-# Batch run semanticFeature or run it on a single image
+# Batch or singly generate the image paths for semanticFeature's use.
+# The results will be written to: semantic_feature_extractor_file_names.txt
+#
 # Batch Example: .\write_query_file_paths.py -i ./queries -o batch
 # Single Example: .\write_query_file_paths.py -i ./queries\0594_2309034355.jpg -o single
 #======================================================================#
