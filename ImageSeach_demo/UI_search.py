@@ -6,6 +6,8 @@ import tkFileDialog
 import os
 from PIL import Image, ImageTk
 
+#Keyword text: E1.get()
+#Toggle search(selected = 1, unselected = 0): searchVC, searchVK, searchCH
 
 class UI_class:
 
@@ -14,7 +16,7 @@ class UI_class:
         self.search_path = search_path
         self.master = master
         topframe = Frame(self.master)
-        topframe.pack()
+
 
         # Buttons
         topspace = Label(topframe).grid(row=0, columnspan=2)
@@ -32,19 +34,34 @@ class UI_class:
 
 #text input
         label1 = Label(root, text="Text Input")
-        E1 = Entry(root, bd=5)
-        def getWord():
-            print E1.get()
+        E1 = Entry(root, bd=5, width = 30)
+        #to get string, use E1.get()
 
-        self.submit = Button(root, text="Submit", command=getWord)
-        self.submit.grid(pady = 10)
+        label2 = Label(root, text="Select search tools")
+        label2.pack()
+        self.searchVC = IntVar()
+        vc = Checkbutton(
+            master, text="Visual Concept",
 
+            variable=self.searchVC)
+        self.searchVK = IntVar()
+        vk = Checkbutton(
+            master, text="Visual Keyword",
 
+            variable=self.searchVK)
+
+        self.searchCH = IntVar()
+        ch = Checkbutton(
+            master, text="Color Histogram",
+
+            variable=self.searchCH)
         label1.pack()
         E1.pack()
-        self.submit.pack()
 
-
+        vc.pack(side= 'top')
+        vk.pack(side='top')
+        ch.pack(side='top')
+        topframe.pack(side='bottom')
         self.master.mainloop()
 
     def browse_query_img(self):
