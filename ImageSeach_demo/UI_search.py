@@ -29,6 +29,7 @@ class UI_class:
         self.cbutton.grid(row=1, column=3, padx = 10)
         self.cbutton.config(height=2, width=10)
         downspace = Label(topframe).grid(row=2, columnspan=4)
+
 #text input
         label1 = Label(root, text="Text Input")
         E1 = Entry(root, bd=5)
