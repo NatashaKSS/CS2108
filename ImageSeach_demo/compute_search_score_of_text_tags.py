@@ -9,10 +9,8 @@ import os, sys, math, glob, getopt, re, pickle, csv
 # containing all relevant imgIDs.
 #
 # Execute this program like this:
-# .\compute_search_score_of_text_tags.py
-# -q ./queries/0594_2309034355.jpg
-# -p testset_text_tags_postings.txt
-# -c ./semantic_feature_1000_classifications.csv
+# ./compute_search_score_of_text_tags.py -q ./queries/0026_255236107.jpg
+# -p testset_text_tags_postings.txt -c ./semantic_feature_1000_classifications.csv
 # -s ./semantic_feature_extractor_file_names.txt
 #
 # The path for the image query file is set after the -q flag.

@@ -17,6 +17,7 @@ Batch Example: ./write_query_file_paths.py -i ./queries -o batch
 Single Example: ./write_query_file_paths.py -i ./queries/0594_2309034355.jpg -o single
 
 Step 3:
+Note: Don't use "/", follow the example below and use "\" because of windows CMD
 .\semanticFeature\image_classification.exe  semantic_feature_extractor_file_names.txt
 
 
