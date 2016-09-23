@@ -1,0 +1,36 @@
+# Note, please double check the scripts and ensure you're referencing to the correct datasets, i.e. the train or test sets.
+
+
+
+*** For generating visual concepts using the semanticFeature plugin for a particular or batch of images ***
+Note: This has been done for all images in the queries folder but this is needed if you are adding new query images (like the Prof's special surprise query image).
+Steps:
+1.) Copy the surprise query image into the folder "queries"
+2.) Generate the text file semanticFeature will use to retrieve the paths of the images to convert to visual concepts.
+3.) Run the semanticFeature script on windows CMD manually
+
+Step 1:
+Copy into queries directory.
+
+Step 2:
+Batch Example: ./write_query_file_paths.py -i ./queries -o batch
+Single Example: ./write_query_file_paths.py -i ./queries/0594_2309034355.jpg -o single
+
+Step 3:
+Note: Don't use "/", follow the example below and use "\" because of windows CMD
+.\semanticFeature\image_classification.exe  semantic_feature_extractor_file_names.txt
+
+
+
+*** For index_text_tags.py ***
+[TRAINING DATA]
+.\index_text_tags.py -d pathindex_train.csv -i ../ImageData/train/train_text_tags.txt -p trainset_text_tags_postings.txt
+
+[TEST DATA]
+.\index_text_tags.py -d pathindex_test.csv -i ../ImageData/test/test_text_tags.txt -p testset_text_tags_postings.txt
+
+
+*** For compute_search_score_of_text_tags.py ***
+
+./compute_search_score_of_text_tags.py -q ./queries/0026_255236107.jpg -p testset_text_tags_postings.txt -c ./semantic_feature_1000_classifications.csv -s ./semantic_feature_extractor_file_names.txt
+
