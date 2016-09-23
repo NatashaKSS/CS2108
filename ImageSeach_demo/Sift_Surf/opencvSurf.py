@@ -85,7 +85,7 @@ for i in range (200): #traverses through height of the image
     #cv2.destroyAllWindows()
     cv2.imwrite(filenameScan, img2)
 '''
-img1 = cv2.imread('01.jpg',0)          # queryImage
+img1 = cv2.imread('0.jpg',0)          # queryImage
 img2 = cv2.imread('scene.jpg',0) # trainImage
 sample = img1
 # sampleGrey = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
@@ -100,8 +100,8 @@ kp, des = detector2.detectAndCompute(sample, None)
 img1KP = cv2.drawKeypoints(sample, kp, None, (255, 0, 0), 4)
 cv2.imwrite('zsample.jpg', img1KP)
 
-# Initiate SURF detector
-detector = cv2.SURF()
+detector = cv2.SURF()# Initiate SURF detector
+
 
 # find the keypoints and descriptors with SIFT
 kp1, des1 = detector.detectAndCompute(img1,None)
@@ -131,7 +131,7 @@ bestMatchNumber = 0.0
 bestMatchList = {'none': 0}
 listSize = 10
 list_kptotal = []
-for i in range (0,200): #traverses through height of the image
+for i in range (110,115): #traverses through height of the image
     filename = str(i) + '.jpg'
     #print filename
     sample = cv2.imread(filename)
@@ -145,19 +145,23 @@ for i in range (0,200): #traverses through height of the image
     matchesMask = [[0, 0] for i in xrange(len(matches))]
 
     # ratio test as per Lowe's paper
-    count = 0
+    count = 0.0
     list_kp = []
     for i, (m, n) in enumerate(matches):
         if m.distance < 0.7 * n.distance:
-            count += 1
+            count += 1.0
             img1_idx = matches[i][1].trainIdx
             (x1, y1) = kp[img1_idx].pt
 
     list_kptotal.append((x1, y1))
-    if (min(bestMatchList.itervalues()) < count or len(bestMatchList) < listSize) :
-        bestMatchNumber = count
+    ratio = max(count/len(des1), count/len(des))
+    print count/len(des)
+    print len(des)
+    print count
+    if (min(bestMatchList.itervalues()) < ratio or len(bestMatchList) < listSize) :
+        bestMatchNumber = ratio
         nameOfMax = filename
-        bestMatchList[filename] = count
+        bestMatchList[filename] = ratio
         if (len(bestMatchList) >= listSize):
             del bestMatchList[min(bestMatchList.iteritems(), key=operator.itemgetter(1))[0]]
 #cv2.imwrite('match.jpg', img3)
