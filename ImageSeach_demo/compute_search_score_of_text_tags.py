@@ -5,35 +5,30 @@ import os, sys, math, glob, getopt, re, pickle, csv
 # Searches for all relevant imgIDs with reference to the query image's
 # text tag search query.
 #
-# The result of the query will be written to the specified output file,
-# containing all relevant imgIDs.
-#
 # Execute this program like this:
-# ./compute_search_score_of_text_tags.py -q ./queries/0026_255236107.jpg
-# -p testset_text_tags_postings.txt -c ./semantic_feature_1000_classifications.csv
-# -s ./semantic_feature_extractor_file_names.txt
+# ./compute_search_score_of_text_tags.py -q ./queries/0594_2309034355.jpg
+# -p testset_text_tags_postings.txt
 #
 # The path for the image query file is set after the -q flag.
 # The path for the postings file specified after the -p  flag should be the
 # postings file produced when you indexed the training data's text_tags.
 #======================================================================#
 
-# TODO: HEY NATASHA REMEMBER TO SPECIFY THE IMG PATH HERE IN EXECUTE FUNCTION
-# AS IT IS THE POINT OF ENTRY OF THE TEXT RETRIEVAL ENGINE
-def execute(term_imgID_map_and_list_of_imgIDs, with_vis_concept, query_string = None):
+def executeTextRetrieval(query_img_file_path, term_imgID_map_and_list_of_imgIDs,
+            with_vis_concept, query_string = None):
     """
     Main execution point of text retrieval engine
 
-    return    ranked list of top 16 search results. The returned list is of
-              the format [(img path, tf-idf score), (...,...), ...].
-              If no ranked list is found, an empty list is returned (this can
-              occur if the visual concept detector does not return any text_tag,
-              or the result images themselves have no text tags).
+    query_img_file_path    Query image's path
+    term_imgID_map_and_list_of_imgIDs
+    return    List of (img path, score) tuples of images that contain any term
+              in the query. Returns an empty list of no such images were found.
+              (this can occur if the visual concept detector does not return
+              any text_tag, or the result images themselves have no text tags).
     """
     # Load semantic feature computation for query image and normalize query terms
     if with_vis_concept:
         query_string = get_query_visual_concept_text_tag(query_img_file_path)
-
     # Empty query strings will not be processed
     normalized_query_list = []
     if not query_string == None:
@@ -43,10 +38,10 @@ def execute(term_imgID_map_and_list_of_imgIDs, with_vis_concept, query_string = 
     query_term_freq_map = compute_query_term_freq_weights(normalized_query_list)
 
     # print "normalized query list: ", normalized_query_list
-    print get_top_results(set(normalized_query_list), query_term_freq_map,
-                          term_imgID_map_and_list_of_imgIDs[0],
-                          term_imgID_map_and_list_of_imgIDs[1],
-                          term_imgID_map_and_list_of_imgIDs[2])
+    print get_tf_idf_scores(set(normalized_query_list), query_term_freq_map,
+                            term_imgID_map_and_list_of_imgIDs[0],
+                            term_imgID_map_and_list_of_imgIDs[1],
+                            term_imgID_map_and_list_of_imgIDs[2])
 
 def process_query(q):
     """
@@ -65,19 +60,20 @@ def process_query(q):
 #======================================================================#
 # Compute tf-idf
 #======================================================================#
-def get_top_results(list_of_query_terms, query_term_freq_map, \
-                    term_postings, list_of_imgIDs, imgID_len_map):
+def get_tf_idf_scores(list_of_query_terms, query_term_freq_map, \
+                      term_postings, list_of_imgIDs, imgID_len_map):
     """
-    Searches for the top 16 ranking results for the specified queries.
+    Computes similarity scores for the specified queries.
 
     list_of_query_terms    List of query terms which are normalized and
                            have no duplicates.
     query_term_freq_map    A mapping of log term frequency weights for each
                            query term.
     term_postings          Postings list of all terms
-    return    List of top 16 results. The scores are sorted in descending
-              order and imgIDs are sorted in ascending order during a
-              tie-breaker.
+    list_of_imgIDs         List of image paths
+    imgID_len_map          Dictionary mapping of imgIDs to their lengths
+    return    List of (imgID, score) tuples of images that contain any term in
+              the query. Returns an empty list of no such images were found.
     """
     scores = {}
     list_of_query_idf = []
@@ -110,10 +106,11 @@ def get_top_results(list_of_query_terms, query_term_freq_map, \
         norm_magnitude = query_norm * math.sqrt(imgID_len_map[imgID])
         scores[imgID] = scores[imgID] / norm_magnitude
 
-    # Ranks the scores in descending order
-    ranked_scores = sorted(scores.items(), \
-                    key = lambda score_pair: score_pair[1], reverse = True)[:16]
-    return ranked_scores
+    #For debugging
+    #Ranks the scores in descending order
+    #ranked_scores = sorted(scores.items(), \
+    #                key = lambda score_pair: score_pair[1], reverse = True)[:16]
+    return scores.items()
 
 def get_idf(term_postings, N):
     """
@@ -189,7 +186,7 @@ def load_postings_and_list_of_imgIDs():
             pickle.load(from_postings_file)]
 
 def load_visual_concept_classes():
-    with open(classifications_file, 'rb') as file:
+    with open("./semantic_feature_1000_classifications.csv", 'rb') as file:
         reader = csv.reader(file)
         query_classifications = list(reader)
     file.close()
@@ -252,15 +249,14 @@ def usage():
     'How-to-use' message in case user does not follow program input format
     """
     print "usage: " + sys.argv[0] + " -q path-to-query-img " +\
-    "-p postings-file -c classifications-file -s semantic_feature_results"
+    "-p postings-file -c classifications-file"
 
 # Initialize required variables to store file paths
-query_img_file_path = query_img_name = postings_file = classifications_file = \
-semantic_results_files= None
+query_img_file_path = postings_file = None
 
 # Save file path arguments into their respective variables
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'q:p:c:s:')
+    opts, args = getopt.getopt(sys.argv[1:], 'q:p:c:')
 except getopt.GetoptError, err:
     # Throw error in case user does not follow program input option format
     usage()
@@ -270,14 +266,9 @@ for o, a in opts:
         query_img_file_path = a
     elif o == '-p':
         postings_file = a
-    elif o == '-c':
-        classifications_file = a
-    elif o == '-s':
-        semantic_results_files = a
     else:
         assert False, "unhandled option"
-if query_img_file_path == None or classifications_file == None or \
-    semantic_results_files == None or postings_file == None:
+if query_img_file_path == None or postings_file == None:
     print "Did you miss out any options?"
     print
     usage()
@@ -316,7 +307,7 @@ visual_concept_classes = load_visual_concept_classes()
 # ==============
 
 # Visual concepts
-# execute(load_postings_and_list_of_imgIDs(), False, "zebra")
+# executeTextRetrieval(query_img_file_path, load_postings_and_list_of_imgIDs(), False, "zebra")
 
 # Text-based query input only
-execute(load_postings_and_list_of_imgIDs(), True)
+executeTextRetrieval(query_img_file_path, load_postings_and_list_of_imgIDs(), True)
