@@ -14,7 +14,7 @@ class QueryLogic:
     
     def get_search_results(self, queryfeatures):
         # perform the search
-        searcher = Searcher("index.csv")
-        #searcher = Searcher("indexfull.csv")
+        #searcher = Searcher("index.csv")
+        searcher = Searcher("indexfull.csv")
         results = searcher.search(queryfeatures)
         return results
