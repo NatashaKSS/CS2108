@@ -3,6 +3,10 @@ from .searcher import Searcher
 import cv2
 
 class QueryLogic:
+
+    def __init__(self):
+        self.searcher = Searcher("indexfull.csv")
+    
     def get_image_attrs(self, file_path):
         # process query image to feature vector
         # initialize the image descriptor
@@ -15,6 +19,5 @@ class QueryLogic:
     def get_search_results(self, queryfeatures):
         # perform the search
         #searcher = Searcher("index.csv")
-        searcher = Searcher("indexfull.csv")
-        results = searcher.search(queryfeatures)
+        results = self.searcher.search(queryfeatures)
         return results

@@ -9,10 +9,9 @@ class Searcher:
     def __init__(self, indexPath):
         # store our index path
         self.indexPath = indexPath
-
-    def search(self, queryFeatures, limit=16):
-        # initialize our dictionary of results
-        results = {}
+        
+        # initialize our dictionary of vectors
+        self.vectors = {}
 
         # open the index file for reading
         with open(self.indexPath) as f:
@@ -24,18 +23,30 @@ class Searcher:
                 # parse out the image ID and features, then compute the
                 # chi-squared distance between the features in our index
                 # and our query features
-                features = [float(x) for x in row[1:]]
-                d = self.chi2_distance(features, queryFeatures)
-
-                # now that we have the distance between the two feature
-                # vectors, we can udpate the results dictionary -- the
-                # key is the current image ID in the index and the
-                # value is the distance we just computed, representing
-                # how 'similar' the image in the index is to our query
-                results[row[0]] = d
+                image_vector = [float(x) for x in row[1:]]
+                self.vectors[row[0]] = image_vector
 
             # close the reader
             f.close()
+
+
+    def search(self, queryFeatures, limit=16):
+        # initialize our dictionary of results
+        results = {}
+
+        for key in self.vectors:
+            # parse out the image ID and features, then compute the
+            # chi-squared distance between the features in our index
+            # and our query features
+            features = self.vectors[key]
+            d = self.chi2_distance(features, queryFeatures)
+
+            # now that we have the distance between the two feature
+            # vectors, we can update the results dictionary -- the
+            # key is the current image ID in the index and the
+            # value is the distance we just computed, representing
+            # how 'similar' the image in the index is to our query
+            results[key] = d
 
         # sort our results, so that the smaller distances (i.e. the
         # more relevant images are at the front of the list)
