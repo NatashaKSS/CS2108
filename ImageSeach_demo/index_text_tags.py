@@ -5,7 +5,7 @@ from os import listdir
 #======================================================================#
 # Program Description:
 # Indexes image tags into a term frequency inverted index structure.
-# The term_imgID_map will be stored in a postings list are on the disk in
+# The term_imgID_map will be stored in a postings list are on the disk
 # according to the specified file path. A postings file is a mapping of
 # term to imgIDs that contain this term. This facilitates the computation of
 # the similarity scores in the search phase.
@@ -44,7 +44,7 @@ def construct_inverted_index(path_to_text_tags, postings_file_path):
         tokens = line.split(" ")
 
         # The imgID is the exact path of that image
-        imgID = generate_image_file_path(tokens[0])
+        imgID = tokens[0]
         # 1st element is imgID, so process remaining tokens
         text_tag_tokens = process_text_tag_tokens(tokens[1:])
         # Accumulate list of imgIDs for search later
