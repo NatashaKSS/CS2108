@@ -36,6 +36,7 @@ def keyword_matching(query_image):
         matches = flann.knnMatch(des1, des2, k=2)
         #print len(matches)
         count = 0.0
+        # ratio test as per Lowe's paper
         for i, (m, n) in enumerate(matches):
             if m.distance < 0.7 * n.distance:
                 count += 1.0
