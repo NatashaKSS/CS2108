@@ -41,8 +41,8 @@ with open(args["result"], "w") as f2:
             files = os.listdir(directory)
             selected_elements = set()
             while len(selected_elements) is not int(args["number"]):
-                element = random.randint(0, 9)
-                if element not in selected_elements:
+                element = random.randint(0, len(files) - 1)
+                if element not in selected_elements and ".jpg" in files[element]:
                     selected_elements.add(element)
             for selected_element in selected_elements:
                 file = files[selected_element]

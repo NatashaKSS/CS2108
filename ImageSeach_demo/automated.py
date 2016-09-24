@@ -36,20 +36,21 @@ with open(args["result"], "w") as f2:
         if os.path.isdir(directory):
             files = os.listdir(directory)
             for file in files:
-                filepath = os.path.join(directory, file)
-                print "Processing " + filepath + "\n"
-                num_match = 0
-                num_result = 0
-                image_attrs = querylogic.get_image_attrs(filepath)
-                results = querylogic.get_search_results(image_attrs)
-                for (score, result) in results:
-                    if result in file_index[first_directory]:
-                        num_match += 1
-                    num_result += 1
-                pscore = num_match / float(num_result)
-                rscore = num_match / float(num_per_category)
-                mapscore = 2 * pscore * rscore / (pscore + rscore + EPS)
-                f2.write("%s,%d,%f,%f" % (file, num_match, pscore, mapscore))
-                for (score, result) in results:
-                    f2.write("," + result)
-                f2.write("\n")
+                if ".jpg" in file:
+                    filepath = os.path.join(directory, file)
+                    print "Processing " + filepath + "\n"
+                    num_match = 0
+                    num_result = 0
+                    image_attrs = querylogic.get_image_attrs(filepath)
+                    results = querylogic.get_search_results(image_attrs)
+                    for (score, result) in results:
+                        if result in file_index[first_directory]:
+                            num_match += 1
+                        num_result += 1
+                    pscore = num_match / float(num_result)
+                    rscore = num_match / float(num_per_category)
+                    mapscore = 2 * pscore * rscore / (pscore + rscore + EPS)
+                    f2.write("%s,%d,%f,%f" % (file, num_match, pscore, mapscore))
+                    for (score, result) in results:
+                        f2.write("," + result)
+                    f2.write("\n")
