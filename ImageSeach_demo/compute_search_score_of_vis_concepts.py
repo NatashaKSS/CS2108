@@ -3,12 +3,8 @@ from itertools import izip
 
 #======================================================================#
 # Program Description:
-#
-#
-# Execute this program like this:
-# ./compute_search_score_of_text_tags.py -q ./queries/0594_2309034355.jpg
-# -p testset_text_tags_postings.txt
-#
+# Searches for all relevant imgIDs with reference to the query image's
+# visual concept feature vector.
 #======================================================================#
 
 def execute_vis_concept(query_img_file_path, img_vectors):
@@ -16,27 +12,30 @@ def execute_vis_concept(query_img_file_path, img_vectors):
     query_img_vector = \
         load_visual_concept_query_img_vectors(query_img_file_vis_concept_vector_path)
 
-    result_euclid = []
+    #result_euclid = []
     result_cosine = []
     for imgID in img_vectors.keys():
-        result_euclid.append((imgID, euclidean_distance(query_img_vector, img_vectors[imgID])))
+        #result_euclid.append((imgID, euclidean_distance(query_img_vector, img_vectors[imgID])))
         result_cosine.append((imgID, cosine_distance(query_img_vector, img_vectors[imgID])))
 
-    # TODO: BUGFIX
-    # Smallest euclidean_distance is the best
-    sorted_scores_eu = sorted(result_euclid, key = lambda x: x[1], reverse=False)
-    sorted_scores_eu = sorted_scores_eu[:50]
-    print sorted_scores_eu
-    print "***"
-    # Largest cosine similarity is the best
-    sorted_scores_cos = sorted(result_cosine, key = lambda x: x[1], reverse=True)
-    sorted_scores_cos = sorted_scores_cos[:10]
-    print sorted_scores_cos
+    # For debugging
+    # sorted_scores_eu = sorted(result_euclid, key = lambda x: x[1], reverse=False)
+    # sorted_scores_eu = sorted_scores_eu[:25]
 
+    # For debugging
+    # Largest cosine similarity is the best
+    # sorted_scores_cos = sorted(result_cosine, key = lambda x: x[1], reverse=True)
+    # sorted_scores_cos = sorted_scores_cos[:10]
+
+    return result_cosine
+
+"""
+# Note that euclidean distance is botched, don't use it
 def euclidean_distance(vector_1, vector_2):
     dist = [(a - b) ** 2 for a, b in zip(vector_1, vector_2)]
     dist = math.sqrt(sum(dist))
     return dist
+"""
 
 def cosine_distance(vector_1, vector_2):
     dot_1_1 = dot_product(vector_1, vector_1)
@@ -47,7 +46,7 @@ def cosine_distance(vector_1, vector_2):
         len2 = math.sqrt(dot_2_2)
         return dot_1_2 / (len1 * len2)
     else:
-        return 0
+        return 0.0
 
 def dot_product(vector_1, vector_2):
     return sum(map(lambda x: x[0] * x[1], izip(vector_1, vector_2)))
@@ -109,7 +108,7 @@ if query_img_file_path == None:
 #=====================================================#
 
 # Train set
-img_vectors = load_visual_concept_img_vectors("semanticpickle.txt")
+# img_vectors = load_visual_concept_img_vectors("semanticpickle.txt")
 
 # Test set
 img_vectors = load_visual_concept_img_vectors("semantictestpickle.txt")
