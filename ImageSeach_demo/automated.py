@@ -49,8 +49,8 @@ with open(args["result"], "w") as f2:
                         num_result += 1
                     pscore = num_match / float(num_result)
                     rscore = num_match / float(num_per_category)
-                    mapscore = 2 * pscore * rscore / (pscore + rscore + EPS)
-                    f2.write("%s,%d,%f,%f" % (file, num_match, pscore, mapscore))
+                    f1score = 2 * pscore * rscore / (pscore + rscore + EPS)
+                    f2.write("%s,%d,%f,%f" % (file, num_match, pscore, f1score))
                     for (score, result) in results:
                         f2.write("," + result)
                     f2.write("\n")
