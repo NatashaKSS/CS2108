@@ -10,15 +10,15 @@ list_surf_des = []
 list_match_result = []
 
 #To be used at initiation
-def loadSurf(file_name):
-    img1 = cv2.imread(file_name, 0)
+def loadSurf(file_path, file_name):
+    img1 = cv2.imread(file_path, 0)
     detector = cv2.SURF()
     kp1, des1 = detector.detectAndCompute(img1, None)
-    list_surf_des.append((file_name, des1))
+    return (file_name, des1)
 
 
 #To be used to obtain list of results
-def keyword_matching(query_image):
+def keyword_matching(query_image, list_surf_des):
     img2 = cv2.imread(query_image, 0)  # trainImage
     detector = cv2.SURF()
     # find the keypoints and descriptors with SIFT
@@ -41,5 +41,5 @@ def keyword_matching(query_image):
             if m.distance < 0.7 * n.distance:
                 count += 1.0
         score = max(count/len(des1), count/len(des2))
-        list_match_result.append([name, score])
+        list_match_result.append((name, score))
     return list_match_result
