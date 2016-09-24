@@ -13,8 +13,8 @@ Step 1:
 Copy into queries directory.
 
 Step 2:
-Batch Example: ./write_query_file_paths.py -i ./queries -o batch
-Single Example: ./write_query_file_paths.py -i ./queries/0594_2309034355.jpg -o single
+Batch Example: python write_query_file_paths.py -i ./queries -o batch
+Single Example: python write_query_file_paths.py -i ./queries/0594_2309034355.jpg -o single
 
 Step 3:
 Note: Don't use "/", follow the example below and use "\" because of windows CMD
@@ -24,13 +24,13 @@ Note: Don't use "/", follow the example below and use "\" because of windows CMD
 
 *** For index_text_tags.py ***
 [TRAINING DATA]
-.\index_text_tags.py -d pathindex_train.csv -i ../ImageData/train/train_text_tags.txt -p trainset_text_tags_postings.txt
+python index_text_tags.py -d pathindex_train.csv -i ../ImageData/train/train_text_tags.txt -p trainset_text_tags_postings.txt
 
 [TEST DATA]
-.\index_text_tags.py -d pathindex_test.csv -i ../ImageData/test/test_text_tags.txt -p testset_text_tags_postings.txt
+python index_text_tags.py -d pathindex_test.csv -i ../ImageData/test/test_text_tags.txt -p testset_text_tags_postings.txt
 
 
 *** For compute_search_score_of_text_tags.py ***
-
-./compute_search_score_of_text_tags.py -q ./queries/0026_255236107.jpg -p testset_text_tags_postings.txt
+[SEARCH THROUGH TEST SET]
+python compute_search_score_of_text_tags.py -q ./queries/0026_255236107.jpg -p testset_text_tags_postings.txt
 

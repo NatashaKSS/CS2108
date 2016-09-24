@@ -26,7 +26,13 @@ def batch_process_semanticFeature():
     a text file meant for semanticFeature
     """
     # Get the list of image file names
-    list_of_img_dirs = glob.glob(query_img_file + "/*.jpg")
+    category_names = get_category_names()
+
+    list_of_img_dirs = []
+    for cat in category_names:
+        path = query_img_file + "\\\\" + cat + "\\\\" + "/*.jpg"
+        list_of_img_dirs.append(glob.glob(path))
+    list_of_img_dirs = [item for sublist in list_of_img_dirs for item in sublist]
 
     # Write the list of image file names to a text file in the correct format
     with open(path_to_list_of_img_names, "w") as img_name_list_file:
@@ -34,6 +40,12 @@ def batch_process_semanticFeature():
             img_name_list_file.write(".\\\\" + img_dir[2:] + "\n")
     img_name_list_file.close()
 
+def get_category_names():
+    with open(path_to_list_of_cate_names, "r") as cate_names_file:
+        lines = cate_names_file.readlines()
+        lines = [x[:-1] for x in lines]
+        cate_names_file.close()
+        return lines
 #======================================================================#
 # Interpretation of program arguments
 #======================================================================#
@@ -75,6 +87,7 @@ if query_img_file == None or option == None:
 # Execution of Program
 #=====================================================#
 path_to_list_of_img_names = "semantic_feature_extractor_file_names.txt"
+path_to_list_of_cate_names = "category_names.txt"
 
 if option == "single":
     single_process_semanticFeature()
