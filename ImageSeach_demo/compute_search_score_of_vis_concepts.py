@@ -76,10 +76,9 @@ def load_visual_concept_query_img_vectors(vis_concept_path):
 #======================================================================#
 # Interpretation of program arguments
 #======================================================================#
+"""
 def usage():
-    """
-    'How-to-use' message in case user does not follow program input format
-    """
+    # 'How-to-use' message in case user does not follow program input format
     print "usage: " + sys.argv[0] + " -q path-to-query-img"
 
 # Initialize required variables to store file paths
@@ -102,7 +101,7 @@ if query_img_file_path == None:
     print
     usage()
     sys.exit(2)
-
+"""
 #=====================================================#
 # Execution of Program
 #=====================================================#
@@ -111,6 +110,6 @@ if query_img_file_path == None:
 # img_vectors = load_visual_concept_img_vectors("semanticpickle.txt")
 
 # Test set
-img_vectors = load_visual_concept_img_vectors("semantictestpickle.txt")
+# img_vectors = load_visual_concept_img_vectors("semantictestpickle.txt")
 
-execute_vis_concept(query_img_file_path, img_vectors)
+# execute_vis_concept(query_img_file_path, img_vectors)
