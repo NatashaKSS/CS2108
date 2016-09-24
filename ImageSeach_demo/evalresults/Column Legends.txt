@@ -1,0 +1,5 @@
+A: File name
+B: Number of correct results out of 16
+C: MAP score (Not MAP)
+D: Average F1 Score
+E - T: Top 16 scores
