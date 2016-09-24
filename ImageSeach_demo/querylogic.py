@@ -85,14 +85,18 @@ class QueryLogic:
                     text_engine.executeTextRetrieval(self.query_path, \
                         text_engine.load_postings_and_list_of_imgIDs(self.trainset_postings_path), True, self.visual_concept_classes)
                 accumulated_result = self.add_scores(accumulated_result, results_vis_concept_img, d)
+
+            # FINAL RESULTS IN [(IMG_ID, SCORE), (...,...), ...] format
+            results = accumulated_result.items()
+
         else:
             # Text retrieval engine only
             results_text_only = \
                 text_engine.executeTextRetrieval("", \
                     text_engine.load_postings_and_list_of_imgIDs(self.trainset_postings_path), False, [], query_text)
+            results = results_text_only
 
         # Debug results
-        results = accumulated_result.items()
         # results = results_colHist
         # results = results_vis_keyword
         # results = results_vis_concept_img
