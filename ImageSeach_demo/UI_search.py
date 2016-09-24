@@ -33,39 +33,44 @@ class UI_class:
         downspace = Label(topframe).grid(row=2, columnspan=4)
 
 #text input
-        label1 = Label(root, text="Text Input")
-        E1 = Entry(root, bd=5, width = 30)
+        label1 = Label(root, text="Text Input for Visual Concept (Text)", pady=10)
+        self.E1 = Entry(root, bd=5, width = 40)
         #to get string, use E1.get()
 
+#Checkboxes
         label2 = Label(root, text="Select search tools")
         label2.pack()
-        self.searchVC = IntVar()
-        vc = Checkbutton(
-            master, text="Visual Concept",
+        self.searchVCImage = IntVar()
 
-            variable=self.searchVC)
+        self.vci = Checkbutton(
+            master, text="Visual Concept (Image)",
+            variable=self.searchVCImage, command = self.toggleTextOff)
+
+        self.searchVCText = IntVar()
+        self.vct = Checkbutton(
+            master, text="Visual Concept (Text Retrieval Only)",
+            variable=self.searchVCText, command = self.toggleText)
+
         self.searchVK = IntVar()
-        vk = Checkbutton(
+        self.vk = Checkbutton(
             master, text="Visual Keyword",
-
-            variable=self.searchVK)
+            variable=self.searchVK, command = self.toggleTextOff)
 
         self.searchCH = IntVar()
-        ch = Checkbutton(
+        self.ch = Checkbutton(
             master, text="Color Histogram",
+            variable=self.searchCH, command = self.toggleTextOff)
 
-            variable=self.searchCH)
+        self.vk.pack(side='top')
+        self.ch.pack(side='top')
+        self.vci.pack(side='top')
+        self.vct.pack(side='top')
         label1.pack()
-        E1.pack()
-
-        vc.pack(side= 'top')
-        vk.pack(side='top')
-        ch.pack(side='top')
+        self.E1.pack()
         topframe.pack(side='bottom')
         self.master.mainloop()
 
     def browse_query_img(self):
-
         self.query_img_frame = Frame(self.master)
         self.query_img_frame.pack()
         from tkFileDialog import askopenfilename
@@ -82,12 +87,27 @@ class UI_class:
         image_label.pack()
 
         self.query_img_frame.mainloop()
-
+    def toggleText(self):
+        self.vci.deselect()
+        self.ch.deselect()
+        self.vk.deselect()
+    def toggleTextOff(self):
+        self.vct.deselect()
     def show_results_imgs(self):
         self.result_img_frame = Frame(self.master)
         self.result_img_frame.pack()
-        
-        results = self.querylogic.get_search_results(self.image_attrs)
+        self.toggle_search = [0,0,0,0]
+        if (self.searchVK.get() == 1):
+            self.toggle_search[0] = 1
+        if (self.searchCH.get() == 1):
+            self.toggle_search[1] = 1
+        if (self.searchVCText.get() == 1):
+            self.toggle_search[2] = 1
+        if (self.searchVCImage.get() == 1):
+            self.toggle_search[3] = 1
+        print self.toggle_search
+        print self.E1.get()
+        results = self.querylogic.get_search_results(self.image_attrs, self.toggle_search, self.E1.get())
 
         # show result pictures
         COLUMNS = 4
