@@ -1,5 +1,5 @@
 # import the necessary packages
-from pyimagesearch.querylogic import QueryLogic
+import querylogic as query_logic_package
 import cv2
 from Tkinter import *
 import tkFileDialog
@@ -12,7 +12,7 @@ from PIL import Image, ImageTk
 class UI_class:
 
     def __init__(self, master, search_path):
-        self.querylogic = QueryLogic()
+        self.querylogic = query_logic_package.QueryLogic()
         self.search_path = search_path
         self.master = master
         topframe = Frame(self.master)
@@ -33,33 +33,33 @@ class UI_class:
         downspace = Label(topframe).grid(row=2, columnspan=4)
 
 #text input
-        label1 = Label(root, text="Text Input for Visual Concept (Text)", pady=10)
+        label1 = Label(root, text="Text-based only", pady=10)
         self.E1 = Entry(root, bd=5, width = 40)
         #to get string, use E1.get()
 
-#Checkboxes
+        #Checkboxes
         label2 = Label(root, text="Select search tools")
         label2.pack()
-        self.searchVCImage = IntVar()
 
+        self.searchVCImage = IntVar()
         self.vci = Checkbutton(
             master, text="Visual Concept (Image)",
-            variable=self.searchVCImage, command = self.toggleTextOff)
+            variable=self.searchVCImage)
 
         self.searchVCText = IntVar()
         self.vct = Checkbutton(
             master, text="Visual Concept (Text Retrieval Only)",
-            variable=self.searchVCText, command = self.toggleText)
+            variable=self.searchVCText)
 
         self.searchVK = IntVar()
         self.vk = Checkbutton(
             master, text="Visual Keyword",
-            variable=self.searchVK, command = self.toggleTextOff)
+            variable=self.searchVK)
 
         self.searchCH = IntVar()
         self.ch = Checkbutton(
             master, text="Color Histogram",
-            variable=self.searchCH, command = self.toggleTextOff)
+            variable=self.searchCH)
 
         self.vk.pack(side='top')
         self.ch.pack(side='top')
@@ -76,8 +76,11 @@ class UI_class:
         from tkFileDialog import askopenfilename
         self.filename = tkFileDialog.askopenfile(
             title='Choose an Image File').name
-        
-        self.image_attrs = self.querylogic.get_image_attrs(self.filename)
+
+        # Set the path for query image
+        self.querylogic.set_query_img_path(self.filename)
+        # Get the color histogram attributes for this query image
+        self.querylogic.set_color_hist_img_attrs()
 
         # show query image
         image_file = Image.open(self.filename)
@@ -88,6 +91,7 @@ class UI_class:
 
         self.query_img_frame.mainloop()
     def toggleText(self):
+        # Not needed
         self.vci.deselect()
         self.ch.deselect()
         self.vk.deselect()
@@ -101,18 +105,17 @@ class UI_class:
             self.toggle_search[0] = 1
         if (self.searchCH.get() == 1):
             self.toggle_search[1] = 1
-        if (self.searchVCText.get() == 1):
-            self.toggle_search[2] = 1
         if (self.searchVCImage.get() == 1):
+            self.toggle_search[2] = 1
+        if (self.searchVCText.get() == 1):
             self.toggle_search[3] = 1
-        print self.toggle_search
-        print self.E1.get()
-        results = self.querylogic.get_search_results(self.image_attrs, self.toggle_search, self.E1.get())
+
+        results = self.querylogic.get_search_results(self.toggle_search, self.E1.get())
 
         # show result pictures
         COLUMNS = 4
         image_count = 0
-        for (score, resultID) in results:
+        for (resultID, score) in results:
             # load the result image and display it
             image_count += 1
             r, c = divmod(image_count - 1, COLUMNS)
@@ -124,9 +127,9 @@ class UI_class:
             myvar.grid(row=r, column=c)
 
         self.result_img_frame.mainloop()
-    
 
-    
+
+
 
 
 root = Tk()
