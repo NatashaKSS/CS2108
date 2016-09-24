@@ -33,8 +33,8 @@ class UI_class:
         downspace = Label(topframe).grid(row=2, columnspan=4)
 
 #text input
-        label1 = Label(root, text="Text Input for Visual Concept (Text)")
-        self.E1 = Entry(root, bd=5, width = 30)
+        label1 = Label(root, text="Text Input for Visual Concept (Text)", pady=10)
+        self.E1 = Entry(root, bd=5, width = 40)
         #to get string, use E1.get()
 
 #Checkboxes
@@ -44,29 +44,29 @@ class UI_class:
 
         self.vci = Checkbutton(
             master, text="Visual Concept (Image)",
-            variable=self.searchVCImage)
+            variable=self.searchVCImage, command = self.toggleTextOff)
 
         self.searchVCText = IntVar()
         self.vct = Checkbutton(
-            master, text="Visual Concept (Text)",
-            variable=self.searchVCText)
+            master, text="Visual Concept (Text Retrieval Only)",
+            variable=self.searchVCText, command = self.toggleText)
 
         self.searchVK = IntVar()
         self.vk = Checkbutton(
             master, text="Visual Keyword",
-            variable=self.searchVK)
+            variable=self.searchVK, command = self.toggleTextOff)
 
         self.searchCH = IntVar()
         self.ch = Checkbutton(
             master, text="Color Histogram",
-            variable=self.searchCH)
-        label1.pack()
-        self.E1.pack()
+            variable=self.searchCH, command = self.toggleTextOff)
 
         self.vk.pack(side='top')
         self.ch.pack(side='top')
-        self.vct.pack(side='top')
         self.vci.pack(side='top')
+        self.vct.pack(side='top')
+        label1.pack()
+        self.E1.pack()
         topframe.pack(side='bottom')
         self.master.mainloop()
 
@@ -87,7 +87,12 @@ class UI_class:
         image_label.pack()
 
         self.query_img_frame.mainloop()
-
+    def toggleText(self):
+        self.vci.deselect()
+        self.ch.deselect()
+        self.vk.deselect()
+    def toggleTextOff(self):
+        self.vct.deselect()
     def show_results_imgs(self):
         self.result_img_frame = Frame(self.master)
         self.result_img_frame.pack()
