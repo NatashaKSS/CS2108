@@ -15,7 +15,7 @@ import os, sys, math, glob, getopt, re, pickle, csv
 #======================================================================#
 
 def executeTextRetrieval(query_img_file_path, term_imgID_map_and_list_of_imgIDs,
-            with_vis_concept, query_string = None):
+            with_vis_concept, visual_concept_classes = [], query_string = None):
     """
     Main execution point of text retrieval engine
 
@@ -27,21 +27,20 @@ def executeTextRetrieval(query_img_file_path, term_imgID_map_and_list_of_imgIDs,
               any text_tag, or the result images themselves have no text tags).
     """
     # Load semantic feature computation for query image and normalize query terms
-    if with_vis_concept:
-        query_string = get_query_visual_concept_text_tag(query_img_file_path)
-    # Empty query strings will not be processed
     normalized_query_list = []
-    if not query_string == None:
+    if with_vis_concept:
+        normalized_query_list = process_query(get_query_visual_concept_text_tag(query_img_file_path, visual_concept_classes))
+    else:
         normalized_query_list = process_query(query_string)
 
     # Get term freq mapping for query terms
     query_term_freq_map = compute_query_term_freq_weights(normalized_query_list)
 
     # print "normalized query list: ", normalized_query_list
-    print get_tf_idf_scores(set(normalized_query_list), query_term_freq_map,
-                            term_imgID_map_and_list_of_imgIDs[0],
-                            term_imgID_map_and_list_of_imgIDs[1],
-                            term_imgID_map_and_list_of_imgIDs[2])
+    return get_tf_idf_scores(set(normalized_query_list), query_term_freq_map,
+                             term_imgID_map_and_list_of_imgIDs[0],
+                             term_imgID_map_and_list_of_imgIDs[1],
+                             term_imgID_map_and_list_of_imgIDs[2])
 
 def process_query(q):
     """
@@ -171,7 +170,7 @@ def get_query_unit_magnitude(list_of_query_idf):
 #======================================================================#
 # Load necessary files
 #======================================================================#
-def load_postings_and_list_of_imgIDs():
+def load_postings_and_list_of_imgIDs(postings_file):
     """
     Loads the postings file in-memory and the list of imgIDs we are to search from
 
@@ -192,7 +191,7 @@ def load_visual_concept_classes():
     file.close()
     return query_classifications
 
-def get_query_visual_concept_text_tag(query_img_file_path):
+def get_query_visual_concept_text_tag(query_img_file_path, visual_concept_classes):
     """
     Gets the list of visual concept classes this query image represents
 
@@ -208,7 +207,7 @@ def get_query_visual_concept_text_tag(query_img_file_path):
     if (os.path.isfile(query_img_text_tag_file_path)):
         with open(query_img_text_tag_file_path, "r") as from_query_img_text_tag_file:
             # Process the concept_vector. Remove the last element as it is spoilt.
-            concept_vector =  from_query_img_text_tag_file.readline().split(" ")[:-1]
+            concept_vector = from_query_img_text_tag_file.readline().split(" ")[:-1]
 
             # List of indexes of text_tags that correspond to the 1000classification file
             text_tags_index_list = []
@@ -244,10 +243,9 @@ def get_query_visual_concept_text_tag(query_img_file_path):
 #======================================================================#
 # Interpretation of program arguments
 #======================================================================#
+"""
 def usage():
-    """
-    'How-to-use' message in case user does not follow program input format
-    """
+    #'How-to-use' message in case user does not follow program input format
     print "usage: " + sys.argv[0] + " -q path-to-query-img " +\
     "-p postings-file -c classifications-file"
 
@@ -273,6 +271,7 @@ if query_img_file_path == None or postings_file == None:
     print
     usage()
     sys.exit(2)
+"""
 
 #=====================================================#
 # Execution of Program
@@ -298,16 +297,14 @@ stop_words = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', \
 excluded_chars = ['']
 
 # Load query classification table for each semantic visual concept
-# This takes some time, so make a global variable
-# TODO: Upon UI_search.py program initiation, load this up
-visual_concept_classes = load_visual_concept_classes()
+# visual_concept_classes = load_visual_concept_classes()
 
 # ==============
 # EXECUTION
 # ==============
 
-# Visual concepts
-# executeTextRetrieval(query_img_file_path, load_postings_and_list_of_imgIDs(), False, "zebra")
-
 # Text-based query input only
-executeTextRetrieval(query_img_file_path, load_postings_and_list_of_imgIDs(), True)
+# executeTextRetrieval(query_img_file_path, load_postings_and_list_of_imgIDs(postings_file), False, visual_concept_classes, "zebra")
+
+# Visual concepts
+# executeTextRetrieval(query_img_file_path, load_postings_and_list_of_imgIDs(postings_file), True, visual_concept_classes)
