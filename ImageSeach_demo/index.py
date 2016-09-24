@@ -17,7 +17,7 @@ ap.add_argument("-i", "--index", required=False, default='index.csv',
 args = vars(ap.parse_args())
 
 # initialize the color descriptor
-cd = ColorDescriptor((8, 12, 3))
+cd = ColorDescriptor((4, 6, 2))
 
 # open the output index file for writing
 output = open(args["index"], "w")

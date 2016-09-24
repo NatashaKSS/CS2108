@@ -10,7 +10,7 @@ ap.add_argument("-d", "--dataset", required=False, default='queries',
                 queried")
 ap.add_argument("-r", "--result", required=False, default='result.csv',
                 help="Path to where the computed results will be stored")
-ap.add_argument("-i", "--index", required=False, default='pathindex.csv',
+ap.add_argument("-i", "--index", required=False, default='pathindex_train.csv',
                 help="Path to the file where the indices of files are stored")
 args = vars(ap.parse_args())
 
@@ -26,6 +26,9 @@ with open(args["index"]) as f:
         file_index[key] = value;
 
 first_directories = os.listdir(args["dataset"])
+
+num_per_category = 50 # for training dataset
+EPS = 1e-9
 
 with open(args["result"], "w") as f2:
     for first_directory in first_directories:
@@ -43,7 +46,10 @@ with open(args["result"], "w") as f2:
                     if result in file_index[first_directory]:
                         num_match += 1
                     num_result += 1
-                f2.write("%s,%d" % (file, num_match))
+                pscore = num_match / float(num_result)
+                rscore = num_match / float(num_per_category)
+                mapscore = 2 * pscore * rscore / (pscore + rscore + EPS)
+                f2.write("%s,%d,%f,%f" % (file, num_match, pscore, mapscore))
                 for (score, result) in results:
                     f2.write("," + result)
                 f2.write("\n")
