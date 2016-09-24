@@ -1,5 +1,5 @@
 # import the necessary packages
-from pyimagesearch.querylogic import QueryLogic
+from querylogic import QueryLogic
 import argparse
 import csv
 import os
@@ -41,8 +41,12 @@ with open(args["result"], "w") as f2:
                     print "Processing " + filepath + "\n"
                     num_match = 0
                     num_result = 0
-                    image_attrs = querylogic.get_image_attrs(filepath)
-                    results = querylogic.get_search_results(image_attrs)
+
+                    # Set up query for query logic without having to set up
+                    # all the initializations of QueryLogic
+                    querylogic.set_query_img_path("./" + filepath)
+                    querylogic.set_color_hist_img_attrs()
+                    results = querylogic.get_search_results([1, 1, 1, 1], "")
                     for (score, result) in results:
                         if result in file_index[first_directory]:
                             num_match += 1
@@ -52,5 +56,5 @@ with open(args["result"], "w") as f2:
                     f1score = 2 * pscore * rscore / (pscore + rscore + EPS)
                     f2.write("%s,%d,%f,%f" % (file, num_match, pscore, f1score))
                     for (score, result) in results:
-                        f2.write("," + result)
+                        f2.write("," + str(result))
                     f2.write("\n")
