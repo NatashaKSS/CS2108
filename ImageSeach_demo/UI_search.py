@@ -10,8 +10,11 @@ from PIL import Image, ImageTk
 #Toggle search(selected = 1, unselected = 0): searchVC, searchVK, searchCH
 
 class UI_class:
-
+    exist_prev_search = False
+    exist_prev_query = False
     def __init__(self, master, search_path):
+
+
         self.querylogic = query_logic_package.QueryLogic()
         self.search_path = search_path
         self.master = master
@@ -21,10 +24,10 @@ class UI_class:
         # Buttons
         topspace = Label(topframe).grid(row=0, columnspan=2)
 
-        self.bbutton = Button(topframe, text=" Choose an image ",
+        self.bbutton = Button(topframe, text="Clear and choose query image ",
                               command=self.browse_query_img)
         self.bbutton.grid(row=1, column=1, padx = 10)
-        self.bbutton.config(height=2, width=20)
+        self.bbutton.config(height=2, width=25)
 
         self.cbutton = Button(topframe, text=" Search ",
                               command=self.show_results_imgs)
@@ -33,7 +36,7 @@ class UI_class:
         downspace = Label(topframe).grid(row=2, columnspan=4)
 
 #text input
-        label1 = Label(root, text="Text-based only", pady=10)
+        label1 = Label(root, text="Text Retrieval", pady=10)
         self.E1 = Entry(root, bd=5, width = 40)
         #to get string, use E1.get()
 
@@ -71,8 +74,11 @@ class UI_class:
         self.master.mainloop()
 
     def browse_query_img(self):
+        if (self.exist_prev_query):
+            self.query_img_frame.destroy()
         self.query_img_frame = Frame(self.master)
         self.query_img_frame.pack()
+
         from tkFileDialog import askopenfilename
         self.filename = tkFileDialog.askopenfile(
             title='Choose an Image File').name
@@ -83,9 +89,13 @@ class UI_class:
         self.querylogic.set_color_hist_img_attrs()
 
         # show query image
+
         image_file = Image.open(self.filename)
+
         resized = image_file.resize((100, 100), Image.ANTIALIAS)
         im = ImageTk.PhotoImage(resized)
+
+        self.exist_prev_query = True
         image_label = Label(self.query_img_frame, image=im)
         image_label.pack()
 
@@ -97,9 +107,12 @@ class UI_class:
         self.vk.deselect()
     def toggleTextOff(self):
         self.vct.deselect()
+
     def show_results_imgs(self):
+        if (self.exist_prev_search):
+            self.result_img_frame.destroy()
         self.result_img_frame = Frame(self.master)
-        self.result_img_frame.pack()
+        self.result_img_frame.pack(expand=False)
         self.toggle_search = [0,0,0,0]
         if (self.searchVK.get() == 1):
             self.toggle_search[0] = 1
@@ -118,6 +131,7 @@ class UI_class:
         for (resultID, score) in results:
             # load the result image and display it
             image_count += 1
+
             r, c = divmod(image_count - 1, COLUMNS)
             im = Image.open(self.search_path + os.sep + resultID)
             resized = im.resize((100, 100), Image.ANTIALIAS)
@@ -125,7 +139,7 @@ class UI_class:
             myvar = Label(self.result_img_frame, image=tkimage)
             myvar.image = tkimage
             myvar.grid(row=r, column=c)
-
+        self.exist_prev_search = True
         self.result_img_frame.mainloop()
 
 
