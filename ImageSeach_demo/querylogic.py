@@ -60,22 +60,22 @@ class QueryLogic:
             # Based on checkboxes selected
             if (switches[0] == 1):
                 # Visual keyword
-                a = 1
+                a = 0.7
                 results_vis_keyword = keyword_matcher.keyword_matching(self.query_path, self.list_surf_des)
                 accumulated_result = self.add_scores(accumulated_result, results_vis_keyword, a)
             if (switches[1] == 1):
                 # Color Histogram
-                b = 1
+                b = 1.0
                 results_colHist = self.color_hist_searcher.search(self.colHist_img_attrs)
                 accumulated_result = self.add_scores(accumulated_result, results_colHist, b)
             if (switches[2] == 1):
                 # Visual Concept (image only)
-                c = 1
+                c = 1.6
                 results_vis_concept_img = vconcept.execute_vis_concept(self.query_path, self.vconcept_img_vectors)
                 accumulated_result = self.add_scores(accumulated_result, results_vis_concept_img, c)
             if (switches[3] == 1):
                 # Visual Concept (text only)
-                d = 1
+                d = 1.2
                 results_vis_concept_text = \
                     text_engine.executeTextRetrieval(self.query_path, \
                         text_engine.load_postings_and_list_of_imgIDs(self.trainset_postings_path), True, self.visual_concept_classes)
