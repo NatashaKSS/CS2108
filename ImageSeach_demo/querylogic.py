@@ -3,7 +3,7 @@ import colordescriptor, searcher
 
 import compute_search_score_of_vis_concepts as vconcept
 import compute_search_score_of_text_tags as text_engine
-import keyword_matching as SURF
+import keyword_matching as keyword_matcher
 
 class QueryLogic:
     def __init__(self):
@@ -16,11 +16,6 @@ class QueryLogic:
         from_vis_keyword_dataset_img_file = open("visual_keyword_des_dataset_images.txt", "r")
         self.list_surf_des = pickle.load(from_vis_keyword_dataset_img_file) # initialize
 
-        """ For loadSurfing
-        self.list_surf_des = []
-        for filename in os.listdir("./dataset"):
-            self.list_surf_des.append(SURF.loadSurf("./dataset/" + filename, filename))
-        """
         # Visual Concept
         # For train set
         self.vconcept_img_vectors = vconcept.load_visual_concept_img_vectors("semanticpickle.txt")
@@ -66,7 +61,7 @@ class QueryLogic:
             if (switches[0] == 1):
                 # Visual keyword
                 a = 1
-                results_vis_keyword = SURF.keyword_matching(self.query_path, self.list_surf_des)
+                results_vis_keyword = keyword_matcher.keyword_matching(self.query_path, self.list_surf_des)
                 accumulated_result = self.add_scores(accumulated_result, results_vis_keyword, a)
             if (switches[1] == 1):
                 # Color Histogram

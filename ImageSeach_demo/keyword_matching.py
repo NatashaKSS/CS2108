@@ -12,7 +12,7 @@ list_match_result = []
 #To be used at initiation
 def loadSurf(file_path, file_name):
     img1 = cv2.imread(file_path, 0)
-    detector = cv2.SURF()
+    detector = cv2.SURF(300)
     kp1, des1 = detector.detectAndCompute(img1, None)
     return (file_name, des1)
 
@@ -20,7 +20,11 @@ def loadSurf(file_path, file_name):
 #To be used to obtain list of results
 def keyword_matching(query_image, list_surf_des):
     img2 = cv2.imread(query_image, 0)  # trainImage
-    detector = cv2.SURF()
+    detector = cv2.SURF(300)
+    FLANN_INDEX_KDTREE = 0
+    index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+    search_params = dict(checks=50)  # or pass empty dictionary
+    flann = cv2.FlannBasedMatcher(index_params, search_params)
     # find the keypoints and descriptors with SIFT
     kp2, des2 = detector.detectAndCompute(img2, None)
     for i in range (len(list_surf_des)):
@@ -29,10 +33,6 @@ def keyword_matching(query_image, list_surf_des):
         #print len(des1)
         #print len(des2)
         # FLANN parameters
-        FLANN_INDEX_KDTREE = 0
-        index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
-        search_params = dict(checks=50)  # or pass empty dictionary
-        flann = cv2.FlannBasedMatcher(index_params, search_params)
         matches = flann.knnMatch(des1, des2, k=2)
         #print len(matches)
         count = 0.0
