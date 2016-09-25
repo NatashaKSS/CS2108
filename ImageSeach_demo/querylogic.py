@@ -79,7 +79,7 @@ class QueryLogic:
                 results_vis_concept_text = \
                     text_engine.executeTextRetrieval(self.query_path, \
                         text_engine.load_postings_and_list_of_imgIDs(self.trainset_postings_path), True, self.visual_concept_classes)
-                accumulated_result = self.add_scores(accumulated_result, results_vis_concept_img, d)
+                accumulated_result = self.add_scores(accumulated_result, results_vis_concept_text, d)
 
             # FINAL RESULTS IN [(IMG_ID, SCORE), (...,...), ...] format
             results = accumulated_result.items()
@@ -107,7 +107,8 @@ class QueryLogic:
     def add_scores(self, accumulated_result, score_vector, scalar):
         if not len(score_vector) == 0:
             for img_ID, score in score_vector:
-                accumulated_result[img_ID] += float(scalar) * score
+                if img_ID in accumulated_result.keys():
+                    accumulated_result[img_ID] += float(scalar) * score
         return accumulated_result
 
     def get_image_attrs(self, file_path):
