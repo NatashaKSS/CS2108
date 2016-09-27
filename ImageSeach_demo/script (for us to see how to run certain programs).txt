@@ -1,16 +1,39 @@
+## For the surprise images ##
+Put them in a different subfolder in ./queries, you can name the subfolders anything.
+
+Run: 
+python write_query_file_paths.py -i ./queries -o batch
+# Note do not put anything else in front of the word "queries" as the program already searches the directory for subfolders.
+
+.\semanticFeature\image_classification.exe  semantic_feature_extractor_file_names.txt
+
+Wait for some time...
+
+
+
+
 # Note, please double check the scripts and ensure you're referencing to the correct datasets, i.e. the train or test sets.
 
+*** For generating visual keywords for the datasets so that startup is faster ***
+Ensure that "./dataset" folder contains the required images (check if from train or test set). 
+The visual keyword data structure is dumped into "visual_keyword_des_dataset_images.txt" as a Python pickle file.
+
+Run:
+python write_vis_keyword_des.py
 
 
-*** For generating visual concepts using the semanticFeature plugin for a particular or batch of images ***
+*** For generating visual concepts using the semanticFeature plugin for a single or batch of images ***
 Note: This has been done for all images in the queries folder but this is needed if you are adding new query images (like the Prof's special surprise query image).
+
 Steps:
 1.) Copy the surprise query image into the folder "queries"
-2.) Generate the text file semanticFeature will use to retrieve the paths of the images to convert to visual concepts.
-3.) Run the semanticFeature script on windows CMD manually
+2.) Generate the text file semanticFeature will use to retrieve the paths of the images to convert to visual concepts. 
+The algorithm used in batch generation of visual concepts assumes that the "./queries" folder contains subfolders named after the categories of train/test sets' images. If you've created a subfolder IT MUST BE NAMED AFTER ANY ONE OF THE CATEGORY NAMES. If you are running evaluation tests, then you need to make sure the subfolders have CORRECT category names (e.g. query image of a car belongs to the 'car' category).
+3.) Run the semanticFeature script on windows CMD manually.
 
+Run:
 Step 1:
-Copy into queries directory.
+Copy into queries directory, ensuring query images are stored in subfolders of any name.
 
 Step 2:
 Batch Example: python write_query_file_paths.py -i ./queries -o batch
@@ -21,7 +44,7 @@ Note: Don't use "/", follow the example below and use "\" because of windows CMD
 .\semanticFeature\image_classification.exe  semantic_feature_extractor_file_names.txt
 
 
-
+*** For generating postings files for text engine ***
 *** For index_text_tags.py ***
 [TRAINING DATA]
 python index_text_tags.py -d pathindex_train.csv -i ../ImageData/train/train_text_tags.txt -p trainset_text_tags_postings.txt
@@ -29,8 +52,7 @@ python index_text_tags.py -d pathindex_train.csv -i ../ImageData/train/train_tex
 [TEST DATA]
 python index_text_tags.py -d pathindex_test.csv -i ../ImageData/test/test_text_tags.txt -p testset_text_tags_postings.txt
 
-
 *** For compute_search_score_of_text_tags.py ***
+* Note: this is just a demonstration of how this is run, this step is not needed in indexing. Please also ensure that the execution loop of the program is uncommented as our final app's code does not contain this. *
 [SEARCH THROUGH TEST SET]
 python compute_search_score_of_text_tags.py -q ./queries/0026_255236107.jpg -p testset_text_tags_postings.txt
-

@@ -1,4 +1,4 @@
-import os, cv2, pickle
+import os, cv2, pickle, ntpath
 import colordescriptor, searcher
 
 import compute_search_score_of_vis_concepts as vconcept
@@ -9,27 +9,31 @@ class QueryLogic:
     def __init__(self):
         self.list_of_img_ids = os.listdir("./dataset")
 
-        # Color Histogram
-        self.color_hist_searcher = searcher.Searcher("indexfull.csv") # ColorHist for Train
+        ## Color Histogram
+        # ColorHist for Train
+        # self.color_hist_searcher = searcher.Searcher("indexfull.csv")
+        # ColorHist for Test
+        self.color_hist_searcher = searcher.Searcher("indextest.csv")
 
-        # Visual Keyword
+        ## Visual Keyword
         from_vis_keyword_dataset_img_file = open("visual_keyword_des_dataset_images.txt", "r")
         self.list_surf_des = pickle.load(from_vis_keyword_dataset_img_file) # initialize
 
-        # Visual Concept
+        ## Visual Concept
         # For train set
-        self.vconcept_img_vectors = vconcept.load_visual_concept_img_vectors("semanticpickle.txt")
-
+        # self.vconcept_img_vectors = vconcept.load_visual_concept_img_vectors("semanticpickle.txt")
         # For test set
-        # self.vconcept_img_vectors = vconcept.load_visual_concept_img_vectors("semantictestpickle.txt")
+        self.vconcept_img_vectors = vconcept.load_visual_concept_img_vectors("semantictestpickle.txt")
 
-        # Text retrieval
-        self.trainset_postings_path = "trainset_text_tags_postings.txt"
-        self.testset_postings_path = "testset_text_tags_postings.txt"
+        ## Text retrieval & Visual Concept (Text)
+        # self.postings_path = "trainset_text_tags_postings.txt"
+        self.postings_path = "testset_text_tags_postings.txt"
         self.visual_concept_classes = text_engine.load_visual_concept_classes()
+        # load_visual_concept_classes will load from "./semantic_feature_1000_classifications.csv"
 
-    def set_query_img_path(self, filename):
-        self.query_path = filename
+    def set_query_img_path(self, filepath):
+        self.query_path = filepath
+        self.query_filename = ntpath.basename(filepath)
 
     def set_color_hist_img_attrs(self):
         self.colHist_img_attrs = self.get_image_attrs(self.query_path)
@@ -78,7 +82,7 @@ class QueryLogic:
                 d = 1.2
                 results_vis_concept_text = \
                     text_engine.executeTextRetrieval(self.query_path, \
-                        text_engine.load_postings_and_list_of_imgIDs(self.trainset_postings_path), True, self.visual_concept_classes)
+                        text_engine.load_postings_and_list_of_imgIDs(self.postings_path), True, self.visual_concept_classes)
                 accumulated_result = self.add_scores(accumulated_result, results_vis_concept_text, d)
 
             # FINAL RESULTS IN [(IMG_ID, SCORE), (...,...), ...] format
@@ -88,18 +92,17 @@ class QueryLogic:
             # Text retrieval engine only
             results_text_only = \
                 text_engine.executeTextRetrieval("", \
-                    text_engine.load_postings_and_list_of_imgIDs(self.trainset_postings_path), False, [], query_text)
+                    text_engine.load_postings_and_list_of_imgIDs(self.postings_path), False, [], query_text)
             results = results_text_only
-
-        # Debug results
-        # results = results_colHist
-        # results = results_vis_keyword
-        # results = results_vis_concept_img
-        # results = results_vis_concept_text
-        # results = results_text_only
 
         # Sort by the 2nd elem of each tuple (i.e. the raw score) in descending order
         results = sorted(results, key=lambda x: x[1], reverse=True)
+
+        # Sometimes, the dataset contains the query image. Delete from results if so.
+        if query_text == "": # Not for text retrieval
+            for res in results:
+                if res[0] == self.query_filename:
+                    results.remove(res)
 
         # return top 16
         return results[:16]
