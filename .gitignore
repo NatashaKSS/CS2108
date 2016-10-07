@@ -1,6 +1,13 @@
 # Ignore Assignment 1 so we can focus on Assignment 2
 ImageSeach_demo
 
+# ASSIGNMENT 2
+.idea*
+Ass2/vine*
+
+
+
+# ASSIGNMENT 1
 # Ignore assignment requirements
 Assigm1--MMRetrieval-CS2108-Sep2016.doc
 readme.pdf
