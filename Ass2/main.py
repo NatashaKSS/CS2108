@@ -2,17 +2,25 @@
 from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk, ImageDraw, ImageFont
+
 import os
+import query_logic as query_logic_package
 
 class UI_class:
     def __init__(self, master, search_path, frame_storing_path):
+        # Initialize required classes
+        self.query_logic = query_logic_package.QueryLogic()
+
+        # Initialize paths to datasets
         self.search_path = search_path
-        self.master = master
         self.frame_storing_path = frame_storing_path
+
+        # Set up Tkinter main object Tk()
+        self.master = master
         topframe = Frame(self.master)
         topframe.pack()
 
-        #Buttons
+        # Set up Buttons
         topspace = Label(topframe).grid(row=0, columnspan=2)
         self.bbutton= Button(topframe, text=" Choose an video ", command=self.browse_query_img)
         self.bbutton.grid(row=1, column=1)
@@ -22,21 +30,26 @@ class UI_class:
 
         self.master.mainloop()
 
-
     def browse_query_img(self):
-
         self.query_img_frame = Frame(self.master)
         self.query_img_frame.pack()
         self.filename = filedialog.askopenfile(title='Choose an Video File').name
 
+        # List of all frameIDs in the path that contains all video frames
         allframes = os.listdir(self.frame_storing_path)
+
+        # Set videoname as video ID without its file extension
         self.videoname = self.filename.strip().split("/")[-1].replace(".mp4","")
 
+        # Set path to frame as '<path><videoname>-frame<frameindex>.jpg'
+        # E.g. 'deeplearning/data/frame/1-frame0.jpg' for
+        # videoname '1''s first frame
         self.frames = []
         for frame in allframes:
             if self.videoname +"-frame" in frame:
                 self.frames.append(self.frame_storing_path + frame)
 
+        # Set up display grid for the video frames
         COLUMNS = len(self.frames)
         self.columns = COLUMNS
         image_count = 0
@@ -47,8 +60,8 @@ class UI_class:
             COLUMNS = 1
 
         for frame in self.frames:
-
             r, c = divmod(image_count, COLUMNS)
+
             try:
                 im = Image.open(frame)
                 resized = im.resize((100, 100), Image.ANTIALIAS)
@@ -61,6 +74,7 @@ class UI_class:
                 image_count += 1
                 self.lastR = r
                 self.lastC = c
+
             except Exception as e:
                 continue
 
@@ -95,6 +109,6 @@ class UI_class:
 
         self.query_img_frame.mainloop()
 
-
 root = Tk()
-window = UI_class(root,search_path='../data/video/', frame_storing_path='../data/frame/')
+window = UI_class(root, search_path='deeplearning/data/video/',
+                        frame_storing_path='deeplearning/data/frame/')
