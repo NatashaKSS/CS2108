@@ -9,7 +9,7 @@ class QueryLogic:
         # self.list_of_img_ids = os.listdir("./dataset")
 
         # Debug
-        print("init query_logic")
+        print("initialize QueryLogic class")
 
     def set_query_vid_path(self, filepath):
         self.query_path = filepath

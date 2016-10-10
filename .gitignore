@@ -23,3 +23,4 @@ ImageSeach_demo/semanticFeature*
 ImageSeach_demo/example.png
 *.mat
 ImageSeach_demo/visual_keyword_des_dataset_images.txt
+*.pyc
