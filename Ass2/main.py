@@ -28,13 +28,12 @@ class UI_class:
         self.cbutton.grid(row=1, column=2)
         downspace = Label(topframe).grid(row=3, columnspan=4)
 
-        # Feature selection
+        # Set up Feature selection using checkboxes and a text box for TEXT search
         # Text Retrieval
         label1 = Label(root, text="Text Retrieval", pady=10)
-        self.E1 = Entry(root, bd=5, width = 40)
-        #to get string, use E1.get()
+        self.E1 = Entry(root, bd=5, width = 40) # to get string, use E1.get()
 
-        # Checkboxes
+        # Checkboxes for audio and visual features
         label2 = Label(root, text="Select search tools")
         label2.pack()
 
@@ -130,6 +129,23 @@ class UI_class:
         self.query_img_frame.mainloop()
 
     def show_venue_category(self):
+        self.toggle_search = [0,0,0,0,0] # I don't know how many we'll need
+        if (self.audio_1.get() == 1):
+            self.toggle_search[0] = 1
+        if (self.audio_2.get() == 1):
+            self.toggle_search[1] = 1
+        if (self.audio_3.get() == 1):
+            self.toggle_search[2] = 1
+        if (self.vci.get() == 1):
+            self.toggle_search[3] = 1
+        if (self.vct.get() == 1):
+            self.toggle_search[4] = 1
+
+        # Run search operation using the QueryLogic class
+        # Comment out as it may return error
+        # results = self.query_logic.get_search_results(self.toggle_search, self.E1.get())
+
+        # Display venue of query video
         if self.columns == 0:
             print("Please extract the key frames for the selected video first!!!")
         else:
