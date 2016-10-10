@@ -77,17 +77,22 @@ class UI_class:
     def browse_query_img(self):
         self.query_img_frame = Frame(self.master)
         self.query_img_frame.pack()
-        self.filename = filedialog.askopenfile(title='Choose an Video File').name
+        self.filepath = filedialog.askopenfile(title='Choose an Video File').name
 
         # List of all frameIDs in the path that contains all video frames
         allframes = os.listdir(self.frame_storing_path)
 
         # Set videoname as video ID without its file extension
-        self.videoname = self.filename.strip().split("/")[-1].replace(".mp4","")
+        self.videoname = self.filepath.strip().split("/")[-1].replace(".mp4","")
+
+        # Save the query video's path and video name for processing in
+        # query_logic.py
+        self.query_logic.set_query_vid_path(self.filepath)
+        self.query_logic.set_query_vid_name(self.videoname)
 
         # Set path to frame as '<path><videoname>-frame<frameindex>.jpg'
-        # E.g. 'deeplearning/data/frame/1-frame0.jpg' for
-        # videoname '1''s first frame
+        # E.g. 'deeplearning/data/frame/1-frame0.jpg' for the first frame
+        # of videoname '1'
         self.frames = []
         for frame in allframes:
             if self.videoname +"-frame" in frame:
@@ -104,7 +109,7 @@ class UI_class:
             print("Please extract the key frames for the selected video first!!!")
             COLUMNS = 1
 
-        # Render every frame as tiles
+        # Render every frame as a tile
         for frame in self.frames:
             r, c = divmod(image_count, COLUMNS)
             try:

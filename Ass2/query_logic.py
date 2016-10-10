@@ -13,7 +13,11 @@ class QueryLogic:
 
     def set_query_vid_path(self, filepath):
         self.query_path = filepath
-        self.query_filename = ntpath.basename(filepath)
+        print(self.query_path)
+
+    def set_query_vid_name(self, filename):
+        self.query_videoname = filename
+        print(self.query_videoname)
 
     def get_search_results(self, switches, query_text):
         results = []
@@ -88,7 +92,7 @@ class QueryLogic:
         # Sometimes, the dataset contains the query image. Delete from results if so.
         if query_text == "": # Not for text retrieval
             for res in results:
-                if res[0] == self.query_filename:
+                if res[0] == self.query_videoname:
                     results.remove(res)
 
         return results[:16] # Top 16 results
