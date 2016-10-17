@@ -77,6 +77,12 @@ def convertArray(array):
 
     return final_array
 
+def maxPoolArray(array):
+    return np.amax(array, axis=0, keepdims=True)
+
+def meanPoolArray(array):
+    return np.mean(array, axis=0, keepdims=True)
+
 def load_training_video_classes(from_path):
     """
     Input:
