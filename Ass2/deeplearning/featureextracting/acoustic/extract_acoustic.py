@@ -68,6 +68,18 @@ def getAcousticFeatures(audio_reading_path):
 def convertArray(array):
     rows, cols = np.shape(array)
 
+    num_new_cols = NUM_COLS - cols
+
+    new_array = np.ndarray(shape=(rows, num_new_cols))
+    new_array.fill(0)
+    
+    final_array = np.append(array, new_array, axis=1)
+
+    return final_array
+
+def convertArrayOld(array):
+    rows, cols = np.shape(array)
+
     num_repeats = math.ceil(NUM_COLS / cols)
 
     new_array = np.tile(array, (1, num_repeats))
