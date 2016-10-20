@@ -6,7 +6,7 @@ ImageSeach_demo
 Ass2/vine*
 Ass2/__pycache__*
 Ass2/deeplearning/data*
-
+Ass2/pyAudioAnalysis-master*
 
 # ASSIGNMENT 1
 # Ignore assignment requirements
@@ -25,3 +25,4 @@ ImageSeach_demo/example.png
 *.mat
 ImageSeach_demo/visual_keyword_des_dataset_images.txt
 *.pyc
+Ass2/classify_video_venue - Copy.py
