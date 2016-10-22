@@ -30,47 +30,66 @@ class UI_class:
 
         # Set up Feature selection using checkboxes and a text box for TEXT search
         # Text Retrieval
-        label1 = Label(root, text="Text Retrieval", pady=10)
-        self.E1 = Entry(root, bd=5, width = 40) # to get string, use E1.get()
+
 
         # Checkboxes for audio and visual features
         label2 = Label(root, text="Select search tools")
         label2.pack()
 
-        self.audio_1 = IntVar()
-        self.audio_1_button = Checkbutton(
-            master, text="Audio Tool 1",
-            variable=self.audio_1)
+        self.audio_mfcc = IntVar()
+        self.audio_mfcc_button = Checkbutton(
+            master, text="MFCC",
+            variable=self.audio_mfcc)
+        label_mfcc = Label(root, text="MFCC Weight")
+        self.Emfcc = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
 
-        self.audio_2 = IntVar()
-        self.audio_2_button = Checkbutton(
-            master, text="Audio Tool 2",
-            variable=self.audio_2)
+        self.audio_energy = IntVar()
+        self.audio_energy_button = Checkbutton(
+            master, text="Energy",
+            variable=self.audio_energy)
+        label_energy = Label(root, text="Energy Weight")
+        self.Eenergy = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
 
-        self.audio_3 = IntVar()
-        self.audio_3_button = Checkbutton(
-            master, text="Audio Tool 3",
-            variable=self.audio_3)
+        self.audio_zerocrossing = IntVar()
+        self.audio_zerocrossing_button = Checkbutton(
+            master, text="Zero Crossing",
+            variable=self.audio_zerocrossing)
+        label_zerocrossing = Label(root, text="Zero Crossing Weight")
+        self.Ezerocrossing = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
 
-        self.vci = IntVar()
-        self.vci_button = Checkbutton(
-            master, text="Visual Concept (Image Only)",
-            variable=self.vci)
+        self.mel = IntVar()
+        self.mel_button = Checkbutton(
+            master, text="Mel (Magnitude Spectrum)",
+            variable=self.mel)
 
-        self.vct = IntVar()
-        self.vct_button = Checkbutton(
-            master, text="Visual Concept (Text Retrieval Only)",
-            variable=self.vct)
+        label_mel = Label(root, text="Mel (Magnitude Spectrum) Weight")
+        self.Emel = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
 
+        self.vc = IntVar()
+        self.vc_button = Checkbutton(
+            master, text="Visual Matching",
+            variable=self.vc)
+        label_vc = Label(root, text="Visual Matching Weight")
+        self.Evc = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()        
+
+        spacer = Label(root, text="______________________",font=(None, 10))        
         # Arrange the checkboxes
-        self.audio_1_button.pack(side='top')
-        self.audio_2_button.pack(side='top')
-        self.audio_3_button.pack(side='top')
-        self.vci_button.pack(side='top')
-        self.vct_button.pack(side='top')
-        label1.pack()
-        self.E1.pack()
-
+        self.audio_mfcc_button.pack(side='top')
+        label_mfcc.pack()
+        self.Emfcc.pack()
+        spacer.pack()
+        self.audio_energy_button.pack(side='top')
+        label_energy.pack()
+        self.Eenergy.pack()
+        self.audio_zerocrossing_button.pack(side='top')
+        label_zerocrossing.pack()
+        self.Ezerocrossing.pack()
+        self.mel_button.pack(side='top')
+        label_mel.pack()
+        self.Emel.pack()
+        self.vc_button.pack(side='top')
+        label_vc.pack()
+        self.Evc.pack()
         self.master.mainloop()
 
     def browse_query_img(self):
@@ -130,20 +149,20 @@ class UI_class:
 
     def show_venue_category(self):
         self.toggle_search = [0,0,0,0,0] # I don't know how many we'll need
-        if (self.audio_1.get() == 1):
+        if (self.audio_mfcc.get() == 1):
             self.toggle_search[0] = 1
-        if (self.audio_2.get() == 1):
+        if (self.audio_energy.get() == 1):
             self.toggle_search[1] = 1
-        if (self.audio_3.get() == 1):
+        if (self.audio_zerocrossing.get() == 1):
             self.toggle_search[2] = 1
-        if (self.vci.get() == 1):
+        if (self.mel.get() == 1):
             self.toggle_search[3] = 1
-        if (self.vct.get() == 1):
+        if (self.vc.get() == 1):
             self.toggle_search[4] = 1
 
         # Run search operation using the QueryLogic class
         # Comment out as it may return error
-        # results = self.query_logic.get_search_results(self.toggle_search, self.E1.get())
+        # results = self.query_logic.get_search_results(self.toggle_search, self.Emfcc.get())
 
         # Display venue of query video
         if self.columns == 0:
