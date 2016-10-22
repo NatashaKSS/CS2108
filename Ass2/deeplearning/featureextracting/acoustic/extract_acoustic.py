@@ -19,7 +19,7 @@ import json
 """
 CHANGE THE NUMBER OF COLUMNS NEEDED HERE
 """
-NUM_COLS = 1200
+NUM_COLS = 50
 
 # initialise boolean array for use later
 
@@ -40,40 +40,43 @@ def getAcousticFeatures(audio_reading_path):
     # 3. Beat track on the percussive signal.
     tempo, beat_frames = librosa.beat.beat_track(y=y_percussive, sr=sr)
 
+    """
     # 4. Compute MFCC features from the raw signal.
-    feature_mfcc = librosa.feature.mfcc(y=y, sr=sr, hop_length=hop_length, n_mfcc=5)
+    feature_mfcc = librosa.feature.mfcc(y=y, sr=sr, hop_length=hop_length, n_mfcc=13)
     feature_mfcc = maxPoolArray(convertArray(feature_mfcc))
     print("MFCC Feature Done:", np.shape(feature_mfcc))
 
-    """
     # 5. Compute Melspectrogram features from the raw signal.
     feature_spect = librosa.feature.melspectrogram(y=y, sr=sr, hop_length=hop_length, n_mels=128, fmax=80000)
     feature_spect = convertArray(feature_spect)
     print("Melspectrogram Feature Done:", np.shape(feature_spect))
-
+    """
     # 6. Compute Zero-Crossing features from the raw signal.
     feature_zerocrossing = librosa.feature.zero_crossing_rate(y=y, hop_length=hop_length)
     feature_zerocrossing = convertArray(feature_zerocrossing)
     print("Zero-Crossing Rate:", np.shape(feature_zerocrossing))
 
+    """
     # 7. Compute Root-Mean-Square (RMS) Energy for each frame.
     feature_energy = librosa.feature.rmse(y=y, hop_length=hop_length)
     feature_energy = convertArray(feature_energy)
+
     print("Energy Feature:", np.shape(feature_energy))
     # return feature_mfcc, feature_spect, feature_zerocrossing, feature_energy
     """
-
-    return feature_mfcc, [], [], []
+    return [], [], feature_zerocrossing, []
 
 def convertArray(array):
     rows, cols = np.shape(array)
 
     num_new_cols = NUM_COLS - cols
 
-    new_array = np.ndarray(shape=(rows, num_new_cols))
-    new_array.fill(0)
-    
-    final_array = np.append(array, new_array, axis=1)
+    if num_new_cols > 0:
+        new_array = np.ndarray(shape=(rows, num_new_cols))
+        new_array.fill(0)
+        final_array = np.append(array, new_array, axis=1)
+    else:
+        final_array = np.compress(bool_array, array, axis=1)
 
     return final_array
 
@@ -81,9 +84,8 @@ def convertArrayOld(array):
     rows, cols = np.shape(array)
 
     num_repeats = math.ceil(NUM_COLS / cols)
-
     new_array = np.tile(array, (1, num_repeats))
-    final_array = np.compress(bool_array, new_array, axis=1)
+    final_array = np.compress(bool_array, array, axis=1)
 
     return final_array
 
@@ -140,14 +142,14 @@ if __name__ == '__main__':
     Note:
     YOU CAN CHANGE FILE PATHS FOR THIS PROGRAM HERE...
     """
-    audio_path = "../../data/audio/" # Note, must end with the slash
+    audio_path = "../../data/audio_yuan_bin/" # Note, must end with the slash
     list_of_audio_names = os.listdir(audio_path)
     print(list_of_audio_names, len(list_of_audio_names))
 
-    load_video_classification_path = "../../../vine-venue-training.txt"
-    # load_video_classification_path = "../../../vine-venue-validation.txt"
+    # load_video_classification_path = "../../../vine-venue-training.txt"
+    load_video_classification_path = "../../../vine-venue-validation.txt"
 
-    save_all_audio_feature_vectors_path = "data_train_MFCC_only_1200_concat.txt"
+    save_all_audio_feature_vectors_path = "data_test_zero_crossing_only_50_NEW.txt"
     """
     END OF FILE PATH PARAMS TO CHANGE
     """
@@ -178,10 +180,10 @@ if __name__ == '__main__':
         [float(num) for num in list( <CHANGE VARIABLE HERE TO WHAT IS NEEDED> )]]]
         """
         # 3. Set the feature vector(s) we want to train the classifier with
-        # all_audio_feature_vectors.append( \
-        #    [int(audio_classes_dict[audio_name]), [float(num) for num in list(feature_mfcc[0])]])
         all_audio_feature_vectors.append( \
-             [int(audio_classes_dict[audio_name]), np.array(feature_mfcc).tolist()])
+           [audio_name, int(audio_classes_dict[audio_name]), [float(num) for num in list(feature_zerocrossing[0])]])
+        # all_audio_feature_vectors.append( \
+        #      [int(audio_classes_dict[audio_name]), np.array(feature_energy).tolist()])
         print()
 
     save_all_audio_feature_vectors_to_text_file( \
