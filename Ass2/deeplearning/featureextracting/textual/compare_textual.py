@@ -46,10 +46,12 @@ class CompareTextual:
         for weight, file_id in results:
             results_dict[self.classi_dict[file_id]] += 1.0
         
+        results_list = []
         for key in results_dict:
             results_dict[key] /= num_results
+            results_list.append((key, results_dict[key]))
         
-        return results_dict
+        return sorted(results_list, key=lambda x: x[1], reverse=True)
             
 
     def compare(self, input_file_id, num_results):
@@ -82,10 +84,10 @@ if __name__ == '__main__':
     
     comparator = CompareTextual(dataset_csv_path, input_csv_path, classification_path)
     
-    temp_dict = comparator.get_category("1000861821491707904", 100)
+    result_list = comparator.get_category("1000861821491707904", 100)
     
-    for key in temp_dict:
-        print(key, ": ", temp_dict[key])
+    for file_id, weight in result_list:
+        print(file_id, ": ", weight)
     
     
     
