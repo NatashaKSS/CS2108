@@ -13,7 +13,8 @@ from sklearn.metrics import log_loss
 """
 Load training set
 """
-data_train_path = './deeplearning/feature/acoustic/Energy/data_train_energy_only_300_NEW.txt'
+data_train_path = \
+    './deeplearning/feature/acoustic/MFCC/NEW_data_train_MFCC_only_300.txt'
 data_train = []
 with open(data_train_path, 'r') as from_training_data_file:
     data_train = json.load(from_training_data_file)
@@ -30,7 +31,8 @@ for sample in data_train:
 """
 Load validation set
 """
-data_test_path = './deeplearning/feature/acoustic/Energy/data_test_energy_only_300_NEW.txt'
+data_test_path = \
+    './deeplearning/feature/acoustic/MFCC/NEW_data_test_MFCC_only_300.txt'
 data_test = []
 with open(data_test_path, 'r') as from_test_data_file:
     data_test = json.load(from_test_data_file)
@@ -54,8 +56,8 @@ Train our model using...
 OneVsRestClassifier, SVM, RBF kernel
 and Evaluate on validation set
 """
-# multi_class_classifier = OneVsRestClassifier(svm.SVR(kernel='rbf', degree=3, gamma=0.1)).fit(X_train, y_train)
-multi_class_classifier = OneVsRestClassifier(svm.SVR(kernel='linear')).fit(X_train, y_train)
+multi_class_classifier = OneVsRestClassifier(svm.SVR(kernel='rbf', degree=3, gamma=0.1)).fit(X_train, y_train)
+# multi_class_classifier = OneVsRestClassifier(svm.SVR(kernel='linear')).fit(X_train, y_train)
 # rbf kernel better
 
 # Evaluate on Train set
@@ -65,7 +67,7 @@ print(classification_report(y_train, multi_class_classifier.predict(X_train), ta
 
 # Evaluate on Test set - Results written to disk
 # Output classification_report and accuracy in-sample and out-of-sample
-check_output_file = open(data_test_path + '-scores-linear.txt', 'w')
+check_output_file = open(data_test_path + '-scores-rbf.txt', 'w')
 check_output_file.write(str(multi_class_classifier.score(X_test, y_test)))
 check_output_file.write(classification_report(y_test, multi_class_classifier.predict(X_test), target_names=None))
 check_output_file.close()
