@@ -12,51 +12,80 @@ import csv
 import os
 import math
 
-def getCsv(csv_path):
-    newdict = {}
-    with open(csv_path, 'r') as csvfile:
-        filereader = csv.reader(csvfile, delimiter=' ')
-        for line in filereader:
-            newvalues = [float(x) for x in line[1:]]
-            newdict[line[0]] = newvalues
-    return newdict
+class CompareTextual:
 
-def compare(input_file_id, dataset_dict, input_dict):
-    input_file_vec = input_dict[input_file_id]
-    results = []
-    
-    for key in dataset_dict:
-        results.append((cosine_distance(input_file_vec, dataset_dict[key]), key))
-    
-    return sorted(results)
+    def __init__(self, dataset_csv_path, input_csv_path, classification_path):
+        self.dataset_dict = self.getCsv(dataset_csv_path)
+        self.input_dict = self.getCsv(input_csv_path)
+        self.classi_dict = self.get_dataset_classification(classification_path)
 
+    def getCsv(self, csv_path):
+        newdict = {}
+        with open(csv_path, 'r') as csvfile:
+            filereader = csv.reader(csvfile, delimiter=' ')
+            for line in filereader:
+                newvalues = [float(x) for x in line[1:]]
+                newdict[line[0]] = newvalues
+        return newdict
     
-# copied from Assg1, may not be correct
-def cosine_distance(vector_1, vector_2):
-    dot_1_1 = dot_product(vector_1, vector_1)
-    dot_2_2 = dot_product(vector_2, vector_2)
-    dot_1_2 = dot_product(vector_1, vector_2)
-    if not dot_1_1 == 0 and not dot_2_2 == 0:
-        len1 = math.sqrt(dot_1_1)
-        len2 = math.sqrt(dot_2_2)
-        return dot_1_2 / (len1 * len2)
-    else:
-        return 0.0
+    def get_dataset_classification(self, file_path):
+        newdict = {}
+        with open(file_path, 'r') as classi_file:
+            filereader = csv.reader(classi_file, delimiter='\t')
+            for line in filereader:
+                newdict[line[0]] = int(line[1])
+        return newdict
+        
+    def get_category(self, input_file_id, num_results):
+        results = self.compare(input_file_id, num_results)
+        results_dict = {}
+        
+        for i in range(1, 31):
+            results_dict[i] = 0.0
+        
+        for weight, file_id in results:
+            results_dict[self.classi_dict[file_id]] += 1.0
+        
+        for key in results_dict:
+            results_dict[key] /= num_results
+        
+        return results_dict
+            
 
-def dot_product(vector_1, vector_2):
-    return sum(map(lambda x: x[0] * x[1], zip(vector_1, vector_2)))
+    def compare(self, input_file_id, num_results):
+        input_file_vec = self.input_dict[input_file_id]
+        results = []
+        
+        for key in self.dataset_dict:
+            results.append((self.cosine_distance(input_file_vec, self.dataset_dict[key]), key))
+        
+        return sorted(results)[-num_results:]
+
+    def cosine_distance(self, vector_1, vector_2):
+        dot_1_1 = self.dot_product(vector_1, vector_1)
+        dot_2_2 = self.dot_product(vector_2, vector_2)
+        dot_1_2 = self.dot_product(vector_1, vector_2)
+        if not dot_1_1 == 0 and not dot_2_2 == 0:
+            len1 = math.sqrt(dot_1_1)
+            len2 = math.sqrt(dot_2_2)
+            return dot_1_2 / (len1 * len2)
+        else:
+            return 0.0
+
+    def dot_product(self, vector_1, vector_2):
+        return sum(map(lambda x: x[0] * x[1], zip(vector_1, vector_2)))
 
 if __name__ == '__main__':
     dataset_csv_path = 'vine-desc-training-results.txt'
     input_csv_path = 'vine-desc-validation-results.txt'
+    classification_path = 'vine-venue-training.txt'
     
-    dataset_dict = getCsv(dataset_csv_path)
-    input_dict = getCsv(input_csv_path)
+    comparator = CompareTextual(dataset_csv_path, input_csv_path, classification_path)
     
-    temp_array = compare("1000861821491707904", dataset_dict, input_dict)
+    temp_dict = comparator.get_category("1000861821491707904", 100)
     
-    for score, file_id in temp_array:
-        print(file_id, ": ", score)
+    for key in temp_dict:
+        print(key, ": ", temp_dict[key])
     
     
     
