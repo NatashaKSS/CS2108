@@ -7,14 +7,13 @@ from sklearn import mixture
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
-from sklearn.externals import joblib
 from sklearn.metrics import classification_report
 from sklearn.metrics import log_loss
 
 """
 Load training set
 """
-data_train_path = './deeplearning/feature/acoustic/Mel/data_train_spect_only_300_NEW.txt'
+data_train_path = './deeplearning/feature/acoustic/Energy/data_train_energy_only_50_NEW.txt'
 data_train = []
 with open(data_train_path, 'r') as from_training_data_file:
     data_train = json.load(from_training_data_file)
@@ -31,7 +30,7 @@ for sample in data_train:
 """
 Load validation set
 """
-data_test_path = './deeplearning/feature/acoustic/Mel/data_test_spect_only_300_NEW.txt'
+data_test_path = './deeplearning/feature/acoustic/Energy/data_test_energy_only_50_NEW.txt'
 data_test = []
 with open(data_test_path, 'r') as from_test_data_file:
     data_test = json.load(from_test_data_file)
@@ -69,27 +68,9 @@ sig_score = log_loss(y_test, multi_class_classifier_probs)
 print("\nsig_score: " + str(sig_score) + "\n")
 print(classification_report(y_train, multi_class_classifier.predict(X_train), target_names=None))
 
-# Our prediction
-test_prediction = multi_class_classifier.predict(X_test)
-print(test_prediction, len(test_prediction))
-
-# Export and save the model for future use so you don't need to train again
-joblib.dump(multi_class_classifier, 'model.pkl', compress=9)
-
 # Evaluate on Test set - Results written to disk
 # Output classification_report and accuracy in-sample and out-of-sample
-"""
-check_output_file = open(data_test_path + '-scores-forests-n500.txt', 'w')
+check_output_file = open(data_test_path + '-scores-forests-n1000.txt', 'w')
 check_output_file.write(str(multi_class_classifier.score(X_test, y_test)))
-check_output_file.write(classification_report(y_test, test_prediction, target_names=None))
+check_output_file.write(classification_report(y_test, multi_class_classifier.predict(X_test), target_names=None))
 check_output_file.close()
-
-check_output_file = open('output_predict_probab.txt', 'w')
-check_output_file.write("\n")
-check_output_file.write(str(list(multi_class_classifier.predict_proba(X_test))))
-check_output_file.write("\n Predict Proba len")
-check_output_file.write(str(len(multi_class_classifier.predict_proba(X_test))))
-check_output_file.write("\n Predict Proba len 1st")
-check_output_file.write(str(len(multi_class_classifier.predict_proba(X_test)[0])))
-check_output_file.close()
-"""
