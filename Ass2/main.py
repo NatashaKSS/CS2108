@@ -122,12 +122,12 @@ class UI_class:
         # E.g. 'deeplearning/data/frame/1-frame0.jpg' for the first frame
         # of videoname '1'
         self.frames = []
-        print (allframes)
-        print (self.videoname +"-frame")
+
+        
         for frame in allframes:
             if self.videoname +"-frame" in frame:
                 self.frames.append(self.frame_storing_path + frame)
-
+        print (self.frames)
         # Set up display grid for the video frames
         COLUMNS = len(self.frames)
         self.columns = COLUMNS

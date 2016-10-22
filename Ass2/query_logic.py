@@ -1,4 +1,5 @@
 import os, pickle, ntpath
+#import classify_visual as vm
 # import colordescriptor
 # import compute_search_score_of_vis_concepts as vconcept
 # import compute_search_score_of_text_tags as text_engine
