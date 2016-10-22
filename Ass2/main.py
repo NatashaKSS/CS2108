@@ -7,6 +7,7 @@ import os
 import query_logic as query_logic_package
 
 class UI_class:
+    exist_prev_query = False
     def __init__(self, master, search_path, frame_storing_path):
         # Initialize required classes
         self.query_logic = query_logic_package.QueryLogic()
@@ -41,21 +42,21 @@ class UI_class:
             master, text="MFCC",
             variable=self.audio_mfcc)
         label_mfcc = Label(root, text="MFCC Weight")
-        self.Emfcc = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
+        self.Emfcc = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
 
         self.audio_energy = IntVar()
         self.audio_energy_button = Checkbutton(
             master, text="Energy",
             variable=self.audio_energy)
         label_energy = Label(root, text="Energy Weight")
-        self.Eenergy = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
+        self.Eenergy = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
 
         self.audio_zerocrossing = IntVar()
         self.audio_zerocrossing_button = Checkbutton(
             master, text="Zero Crossing",
             variable=self.audio_zerocrossing)
         label_zerocrossing = Label(root, text="Zero Crossing Weight")
-        self.Ezerocrossing = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
+        self.Ezerocrossing = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
 
         self.mel = IntVar()
         self.mel_button = Checkbutton(
@@ -63,41 +64,50 @@ class UI_class:
             variable=self.mel)
 
         label_mel = Label(root, text="Mel (Magnitude Spectrum) Weight")
-        self.Emel = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()
+        self.Emel = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
 
         self.vc = IntVar()
         self.vc_button = Checkbutton(
             master, text="Visual Matching",
             variable=self.vc)
         label_vc = Label(root, text="Visual Matching Weight")
-        self.Evc = Entry(root, bd=5, width = 40) # to get string, use Emfcc.get()        
+        self.Evc = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()        
 
-        spacer = Label(root, text="______________________",font=(None, 10))        
+        spacer1 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))  
+        spacer2 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1)) 
+        spacer3 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1)) 
+        spacer4 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))       
         # Arrange the checkboxes
-        self.audio_mfcc_button.pack(side='top')
+        #self.audio_mfcc_button.pack(side='top')
         label_mfcc.pack()
         self.Emfcc.pack()
-        spacer.pack()
-        self.audio_energy_button.pack(side='top')
+        spacer1.pack()
+        #self.audio_energy_button.pack(side='top')
         label_energy.pack()
         self.Eenergy.pack()
-        self.audio_zerocrossing_button.pack(side='top')
+        spacer2.pack()
+        #self.audio_zerocrossing_button.pack(side='top')
         label_zerocrossing.pack()
         self.Ezerocrossing.pack()
-        self.mel_button.pack(side='top')
+        spacer3.pack()
+        #self.mel_button.pack(side='top')
         label_mel.pack()
         self.Emel.pack()
-        self.vc_button.pack(side='top')
+        spacer4.pack()
+        #self.vc_button.pack(side='top')
         label_vc.pack()
         self.Evc.pack()
         self.master.mainloop()
 
     def browse_query_img(self):
+        if (self.exist_prev_query):
+            self.query_img_frame.destroy()
         self.query_img_frame = Frame(self.master)
         self.query_img_frame.pack()
         self.filepath = filedialog.askopenfile(title='Choose an Video File').name
 
         # List of all frameIDs in the path that contains all video frames
+
         allframes = os.listdir(self.frame_storing_path)
 
         # Set videoname as video ID without its file extension
@@ -112,6 +122,8 @@ class UI_class:
         # E.g. 'deeplearning/data/frame/1-frame0.jpg' for the first frame
         # of videoname '1'
         self.frames = []
+        print (allframes)
+        print (self.videoname +"-frame")
         for frame in allframes:
             if self.videoname +"-frame" in frame:
                 self.frames.append(self.frame_storing_path + frame)
@@ -144,7 +156,7 @@ class UI_class:
                 self.lastC = c
             except Exception as e:
                 continue
-
+        self.exist_prev_query = True
         self.query_img_frame.mainloop()
 
     def show_venue_category(self):
@@ -179,7 +191,7 @@ class UI_class:
             # Set background and draw text with specified font type
             venue_img = Image.open("background.jpg")
             draw = ImageDraw.Draw(venue_img)
-            font = ImageFont.truetype("Arial.ttf",size=66)
+            font = ImageFont.truetype("Avenir.otf",size=66)
             draw.text((50,50), venue_text, (0, 0, 0), font=font)
 
             # Draw result image frames and venue labels
