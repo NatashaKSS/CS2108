@@ -1,0 +1,8 @@
+Video_train (audio_adrian)
+../data/video_train_copy/1001032302756761600.mp4
+../data/video_train_copy/1001088152326610944.mp4
+../data/video_train_copy/1005958035061297152.mp4
+
+Video_test (audio_yuan_bin)
+../data/video_test_copy/1001949402207817728.mp4
+../data/video_test_copy/1003814253217861632.mp4

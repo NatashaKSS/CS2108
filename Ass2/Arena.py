@@ -32,12 +32,12 @@ venueDic['zoo'] = [
 	'Zoo'
 ]
 
-venueDic['outdoor vacation'] = [
+venueDic['beach'] = [
 	'Beach',
 	'Resort'
 ]
 
-venueDic['malls'] = [
+venueDic['mall'] = [
 	'Mall',
 	'Entertainment',
 	'Other Outdoors',

@@ -6,11 +6,11 @@ import pickle
 import Arena as ArenaData
 
 '''
-image_path1 = imagename + '-frame0.jpg'
-image_path2 = imagename + '-frame1.jpg'
-image_path3 = imagename + '-frame2.jpg'
-image_path4 = imagename + '-frame3.jpg'
-image_path5 = imagename + '-frame4.jpg'
+image_path1 = framePath + '-frame0.jpg'
+image_path2 = framePath + '-frame1.jpg'
+image_path3 = framePath + '-frame2.jpg'
+image_path4 = framePath + '-frame3.jpg'
+image_path5 = framePath + '-frame4.jpg'
 
  image_set = [image_path1, image_path2, image_path3, image_path4, image_path5]
 '''
@@ -42,10 +42,10 @@ def run_visual_classifier(image_path):
 
     # Loads label file, strips off carriage return
     label_lines = [line.rstrip() for line 
-                       in tf.gfile.GFile("a2/output_labels.txt")]
+                       in tf.gfile.GFile("output_labels.txt")]##a2
 
     # Unpersists graph from file
-    with tf.gfile.FastGFile("a2/output_graph.pb", 'rb') as f:
+    with tf.gfile.FastGFile("output_graph.pb", 'rb') as f:##a2
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')
@@ -60,36 +60,61 @@ def run_visual_classifier(image_path):
         # Sort to show labels of first prediction in order of confidence
         top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
 
-        #thefile = open('a2/visualMatch.txt', 'w')
+        #thefile = open('visualMatch.txt', 'w')##a2
         for node_id in top_k:
             human_string = label_lines[node_id]
             score = predictions[0][node_id]
             #print('%s (score = %.5f)' % (human_string, score))
             element = [human_string, score]
             result.append(element)
-        #np.savetxt('a2/visualMatch.txt', top_k)
+        #np.savetxt('visualMatch.txt', top_k)##a2
         print ('best valid search', result[0])
         return result[0]
     return result[0]
-
+def printDict(dictionary):
+    for i in dictionary:
+        print (i, " : ", dictionary[i])
 # MAIN=======================================
 
-index = 2    
-valids = pickle.load( open( "a2/save.txt", "rb" ))
-venueDic = ArenaData.getDic()
-print(venueDic)
+  
+#valids = pickle.load( open( "save.txt", "rb" ))##a2
+#venueDic = ArenaData.getDic()
+#print(venueDic)
 
-print (valids)
-if (sys.argv[1] == '-reset'):
-    print ('reset results')
-    valids = {}
-while (sys.argv[index] != '-1'):
-    imageName = sys.argv[index] 
-    if not (imageName in valids):
-        result = allValidationRead(imageName)
-        print ('possible places', venueDic[result])
-        value = [result, venueDic[result]]
-        valids[imageName] = value
-    index += 1
-pickle.dump(valids, open( "a2/save.txt", "wb" ) )
+validsGlobal = {}
+
+venueDic = {}
+
+venueDic = ArenaData.getDic()
+def load():
+    if (os.stat("save.txt").st_size == 0):
+        valids = {}
+    else:
+        valids = pickle.load( open( "save.txt", "rb" ))##a2    
+    print ('loaded valid')
+    printDict(valids)
+    return valids
+
+
+
+def runVisualClassifier(framePath, name, type):
+    venueDic = ArenaData.getDic()
+    if (framePath != '-1'):
+        validsGlobal = load()
+        print('searching if file is in', not (name in validsGlobal))
+        if not (name in validsGlobal):
+            result = allValidationRead(framePath)
+            print ('possible places', venueDic[result])
+            value = [result, venueDic[result]]
+            validsGlobal[name] = value
+            save(validsGlobal)
+def save(validPickle):
+    print ("SAVING ")
+    printDict(validPickle)
+    open( "save.txt", "wb" ).close()
+    pickle.dump(validPickle, open( "save.txt", "wb" ) )##a2
+
+
+
+
 
