@@ -62,8 +62,6 @@ class QueryLogic:
         # pickle load AUDIO results
         with open('audio_results.pickle', 'rb') as to_file:
             audio_results = pickle.load(to_file)
-        # print(audio_results)
-        # print()
 
         # pickle load VISUAL results
         with open('save.txt', 'rb') as to_file:
@@ -87,6 +85,7 @@ class QueryLogic:
         """
         # Default venues in case anything goes wrong
         final_venue = "Default"
+        umbrella_group_title = "Default"
         umbrella_group_venues = ['Default', 'Nightclub', 'Hockey', 'Theme Park', 'Rock Club', 'Concert Hall', 'Theme Park', 'Music Venue']
 
         AUDIO_ONLY = (switches[0] == 1) and (switches[1] == 0) and (switches[2] == 0)
@@ -104,6 +103,7 @@ class QueryLogic:
         if (VISUAL_ONLY):
             # Visual ONLY - returns the list of possible venues in its umbrella group
             print("visual only")
+            umbrella_group_title = visual_results[self.query_videoname][0]
             umbrella_group_venues = visual_results[self.query_videoname][1]
         else:
             umbrella_group_venues = ""
@@ -116,13 +116,17 @@ class QueryLogic:
         if (AUDIO_AND_VISUAL_ONLY or AUDIO_AND_VISUAL_AND_TEXT):
             # Acoustic and Visual turned on
             print("acoustic and visual turned on")
+            umbrella_group_title = visual_results[self.query_videoname][0]
             umbrella_group_venues = visual_results[self.query_videoname][1]
+
+            # Note: Visual returns null, then just return the top result of acoustic
+            final_venue = audio_results[self.query_videoname][0]
             for audio_venue in audio_results[self.query_videoname]:
                 if audio_venue in umbrella_group_venues:
                     final_venue = audio_venue
                     break
 
-        return [final_venue, umbrella_group_venues]
+        return [final_venue, umbrella_group_venues, umbrella_group_title]
 
     """
     From Assignment 1

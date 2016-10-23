@@ -181,6 +181,7 @@ class UI_class:
         else:
             final_venue = results[0]
             umbrella_group_venues = results[1]
+            umbrella_group_title = results[2]
 
             # Set background and draw text with specified font type
             venue_img = Image.open("background.jpg")
@@ -196,7 +197,7 @@ class UI_class:
                 for venue_labels in self.umbrella_groups:
                     venue_labels.destroy()
 
-            self.umbrella_title = Label(root, text="Visual Umbrella Group",font=(None, 14))
+            self.umbrella_title = Label(root, text="Visual Umbrella Group: " + str(umbrella_group_title),font=(None, 14))
             self.umbrella_title.pack()
 
             self.umbrella_groups = []
