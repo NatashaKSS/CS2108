@@ -7,7 +7,8 @@ class QueryLogic:
         # self.list_of_img_ids = os.listdir("./dataset")
 
         # Debug
-        print("initialize QueryLogic class")
+        print("initialize QueryLogic class\n")
+        self.venue_master = self.get_venue_classification("./venue-name.txt")
 
     def set_query_vid_path(self, filepath):
         self.query_path = filepath
@@ -16,6 +17,29 @@ class QueryLogic:
     def set_query_vid_name(self, filename):
         self.query_videoname = filename
         print(self.query_videoname)
+
+    def get_venue_classification(self, from_path):
+        """
+        Gets the master list of venues and returns a list contain their String
+        names.
+        Note: This list is 0-indexed while the master list is 1-index
+        """
+        audio_classes = []
+
+        with open(from_path) as from_file:
+            lines = from_file.readlines()
+            for line in lines:
+                index_venue_pair = line.split("\t")
+                venue_index = int(index_venue_pair[0])
+                venue_name = index_venue_pair[1][:-1] # gets rid of \n at back
+                audio_classes.append(venue_name)
+        return audio_classes
+
+    def get_text_sorted_venues(self, venueindex_name_lst):
+        venue_names = []
+        for index, name in venueindex_name_lst:
+            venue_names.append(self.venue_master[index - 1])
+        return venue_names
 
     def get_search_results(self, switches, weights):
         """
@@ -39,11 +63,13 @@ class QueryLogic:
         with open('audio_results.pickle', 'rb') as to_file:
             audio_results = pickle.load(to_file)
         # print(audio_results)
+        # print()
 
         # pickle load VISUAL results
         with open('save.txt', 'rb') as to_file:
             visual_results = pickle.load(to_file)
         print("Visual Dict: ", visual_results)
+        print()
 
         # get TEXT results
         dataset_csv_path = 'vine-desc-training-results.txt'
@@ -52,8 +78,9 @@ class QueryLogic:
         input_classification_path = 'vine-venue-validation.txt'
 
         comparator = CompareTextual(input_csv_path, dataset_csv_path, input_classification_path)
-        text_results = comparator.get_category(self.query_videoname, 100)
-        print(text_results)
+        text_results = self.get_text_sorted_venues(comparator.get_category(self.query_videoname, 100))
+        print("Text results: ", text_results)
+        print()
 
         """
         Adjust the parameters HERE!!
