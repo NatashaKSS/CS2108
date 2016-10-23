@@ -37,46 +37,36 @@ class UI_class:
         label2 = Label(root, text="Select search tools")
         label2.pack()
 
-        self.audio_mfcc = IntVar()
-        self.audio_mfcc_button = Checkbutton(
-            master, text="MFCC",
-            variable=self.audio_mfcc)
+        #self.audio_mfcc = IntVar()
+        #self.audio_mfcc_button = Checkbutton(master, text="MFCC", variable=self.audio_mfcc)
         label_mfcc = Label(root, text="MFCC Weight")
-        self.Emfcc = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
+        self.Emfcc = Entry(root, bd=5, width = 10) # to get string, use self.Emfcc.get()
 
-        self.audio_energy = IntVar()
-        self.audio_energy_button = Checkbutton(
-            master, text="Energy",
-            variable=self.audio_energy)
+        #self.audio_energy = IntVar()
+        #self.audio_energy_button = Checkbutton(master, text="Energy", variable=self.audio_energy)
         label_energy = Label(root, text="Energy Weight")
-        self.Eenergy = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
+        self.Eenergy = Entry(root, bd=5, width = 10) # to get string, use self.Eenergy.get()
 
-        self.audio_zerocrossing = IntVar()
-        self.audio_zerocrossing_button = Checkbutton(
-            master, text="Zero Crossing",
-            variable=self.audio_zerocrossing)
+        #self.audio_zerocrossing = IntVar()
+        #self.audio_zerocrossing_button = Checkbutton(master, text="Zero Crossing", variable=self.audio_zerocrossing)
         label_zerocrossing = Label(root, text="Zero Crossing Weight")
-        self.Ezerocrossing = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
+        self.Ezerocrossing = Entry(root, bd=5, width = 10) # to get string, use self.Ezerocrossing.get()
 
-        self.mel = IntVar()
-        self.mel_button = Checkbutton(
-            master, text="Mel (Magnitude Spectrum)",
-            variable=self.mel)
-
+        #self.mel = IntVar()
+        #self.mel_button = Checkbutton(master, text="Mel (Magnitude Spectrum)", variable=self.mel)
         label_mel = Label(root, text="Mel (Magnitude Spectrum) Weight")
-        self.Emel = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()
+        self.Emel = Entry(root, bd=5, width = 10) # to get string, use self.Emel.get()
 
-        self.vc = IntVar()
-        self.vc_button = Checkbutton(
-            master, text="Visual Matching",
-            variable=self.vc)
-        label_vc = Label(root, text="Visual Matching Weight")
-        self.Evc = Entry(root, bd=5, width = 10) # to get string, use Emfcc.get()        
+        #self.visual = IntVar()
+        #self.visual_button = Checkbutton(master, text="Visual Matching", variable=self.visual)
+        label_visual = Label(root, text="Visual Matching Weight")
+        self.Evisual = Entry(root, bd=5, width = 10) # to get string, use self.Evisual.get()
 
-        spacer1 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))  
-        spacer2 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1)) 
-        spacer3 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1)) 
-        spacer4 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))       
+        spacer1 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))
+        spacer2 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))
+        spacer3 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))
+        spacer4 = Label(root, text="________________________________________________________________________________________________________________________________________________",font=(None, 1))
+
         # Arrange the checkboxes
         #self.audio_mfcc_button.pack(side='top')
         label_mfcc.pack()
@@ -94,9 +84,23 @@ class UI_class:
         label_mel.pack()
         self.Emel.pack()
         spacer4.pack()
-        #self.vc_button.pack(side='top')
-        label_vc.pack()
-        self.Evc.pack()
+
+        label_visual.pack()
+        self.Evisual.pack()
+
+        # Check buttons for ACOUSTIC, VISUAL AND TEXT features
+        self.acoustic = IntVar()
+        self.acoustic_button = Checkbutton(master, text="Acoustic", variable=self.acoustic)
+        self.acoustic_button.pack(side='top')
+
+        self.visual = IntVar()
+        self.visual_button = Checkbutton(master, text="Visual", variable=self.visual)
+        self.visual_button.pack(side='top')
+
+        self.text = IntVar()
+        self.text_button = Checkbutton(master, text="Text", variable=self.text)
+        self.text_button.pack(side='top')
+
         self.master.mainloop()
 
     def browse_query_img(self):
@@ -123,7 +127,7 @@ class UI_class:
         # of videoname '1'
         self.frames = []
 
-        
+
         for frame in allframes:
             if self.videoname +"-frame" in frame:
                 self.frames.append(self.frame_storing_path + frame)
@@ -160,27 +164,24 @@ class UI_class:
         self.query_img_frame.mainloop()
 
     def show_venue_category(self):
-        self.toggle_search = [0,0,0,0,0] # I don't know how many we'll need
-        if (self.audio_mfcc.get() == 1):
-            self.toggle_search[0] = 1
-        if (self.audio_energy.get() == 1):
-            self.toggle_search[1] = 1
-        if (self.audio_zerocrossing.get() == 1):
-            self.toggle_search[2] = 1
-        if (self.mel.get() == 1):
-            self.toggle_search[3] = 1
-        if (self.vc.get() == 1):
-            self.toggle_search[4] = 1
+        self.toggle_search = [self.acoustic.get(), self.visual.get(), self.text.get()]
+        self.audio_weights = [self.Emfcc.get(), self.Eenergy.get(), self.Ezerocrossing.get(), self.Emel.get()]
+
+        print("Swtiches: ", self.acoustic.get(), self.visual.get(), self.text.get())
+        print("Acoustic Weights: ", self.Emfcc.get(), self.Eenergy.get(), self.Ezerocrossing.get(), self.Emel.get())
+        print()
 
         # Run search operation using the QueryLogic class
-        # Comment out as it may return error
-        # results = self.query_logic.get_search_results(self.toggle_search, self.Emfcc.get())
+        results = self.query_logic.get_search_results(self.toggle_search, self.audio_weights)
 
         # Display venue of query video
         if self.columns == 0:
             print("Please extract the key frames for the selected video first!!!")
         else:
-            # Please note that, you need to write your own classifier to estimate the venue category to show blow.
+            # Please note that, you need to write your own classifier to estimate the venue category to show below.
+            # final_venue = results[0]
+            # umbrella_group_venues = results[1]
+
             if self.videoname == '1':
                venue_text = "Hello"
             elif self.videoname == '2':
