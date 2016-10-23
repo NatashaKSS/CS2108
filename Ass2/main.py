@@ -8,6 +8,7 @@ import query_logic as query_logic_package
 
 class UI_class:
     exist_prev_query = False
+    umbrella_displayed_already = False
     def __init__(self, master, search_path, frame_storing_path):
         # Initialize required classes
         self.query_logic = query_logic_package.QueryLogic()
@@ -178,22 +179,33 @@ class UI_class:
         if self.columns == 0:
             print("Please extract the key frames for the selected video first!!!")
         else:
-            # Please note that, you need to write your own classifier to estimate the venue category to show below.
-            # final_venue = results[0]
-            # umbrella_group_venues = results[1]
-
-            if self.videoname == '1':
-               venue_text = "Hello"
-            elif self.videoname == '2':
-                venue_text = 'It\'s'
-            elif self.videoname == '4':
-                venue_text = 'Me'
+            final_venue = results[0]
+            umbrella_group_venues = results[1]
 
             # Set background and draw text with specified font type
             venue_img = Image.open("background.jpg")
             draw = ImageDraw.Draw(venue_img)
+
+            # Draw final venue text
             font = ImageFont.truetype("Avenir.otf",size=66)
-            draw.text((50,50), venue_text, (0, 0, 0), font=font)
+            draw.text((50,50), final_venue, (0, 0, 0), font=font)
+
+            # Draw suggested umbrella_group_venues
+            if (self.umbrella_displayed_already):
+                self.umbrella_title.destroy()
+                for venue_labels in self.umbrella_groups:
+                    venue_labels.destroy()
+
+            self.umbrella_title = Label(root, text="Visual Umbrella Group",font=(None, 14))
+            self.umbrella_title.pack()
+
+            self.umbrella_groups = []
+            for venue in umbrella_group_venues:
+                self.spacer_umbrella = Label(root, text=venue,font=(None, 10))
+                self.umbrella_groups.append(self.spacer_umbrella)
+                self.spacer_umbrella.pack()
+
+            self.umbrella_displayed_already = True
 
             # Draw result image frames and venue labels
             resized = venue_img.resize((100, 100), Image.ANTIALIAS)

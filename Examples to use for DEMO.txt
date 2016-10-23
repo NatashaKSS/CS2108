@@ -1,0 +1,34 @@
+Demonstrate VISUAL ONLY
+1011032259538706432	Video with the polar bear
+1003403665950003200	Video with the airplane wing
+
+Demonstrate AUDIO ONLY
+1019099425899261952	Video with soccer field
+
+Demonstrate TEXT ONLY
+(Pending)
+
+Demonstrate VISUAL + AUDIO + TEXT
+1003195214305124352	Video with people rocking out
+
+
+
+
+
+
+------------------------------------------------------
+Detailed Results
+------------------------------------------------------
+Visual only
+    1011032259538706432 - Zoo
+    Audio [BAD] PlazaSquare, Mall, Travel... 
+
+    1003403665950003200 - Airport
+    Audio [DEFINITE] Airport
+
+Audio only
+    1003195214305124352 - Rock Club
+    1019099425899261952 - Soccer
+
+Visual + Audio
+    1003195214305124352 - Rock Club

@@ -77,7 +77,7 @@ class QueryLogic:
         classification_path = 'vine-venue-training.txt'
         input_classification_path = 'vine-venue-validation.txt'
 
-        comparator = CompareTextual(input_csv_path, dataset_csv_path, input_classification_path)
+        comparator = CompareTextual(dataset_csv_path, input_csv_path, classification_path)
         text_results = self.get_text_sorted_venues(comparator.get_category(self.query_videoname, 100))
         print("Text results: ", text_results)
         print()
@@ -85,22 +85,44 @@ class QueryLogic:
         """
         Adjust the parameters HERE!!
         """
+        # Default venues in case anything goes wrong
+        final_venue = "Default"
+        umbrella_group_venues = ['Default', 'Nightclub', 'Hockey', 'Theme Park', 'Rock Club', 'Concert Hall', 'Theme Park', 'Music Venue']
+
+        AUDIO_ONLY = (switches[0] == 1) and (switches[1] == 0) and (switches[2] == 0)
+        VISUAL_ONLY = (switches[0] == 0) and (switches[1] == 1) and (switches[2] == 0)
+        TEXT_ONLY = (switches[0] == 0) and (switches[1] == 0) and (switches[2] == 1)
+        AUDIO_AND_VISUAL_ONLY = (switches[0] == 1) and (switches[1] == 1) and (switches[2] == 0)
+        AUDIO_AND_VISUAL_AND_TEXT = (switches[0] == 1) and (switches[1] == 1) and (switches[2] == 1)
+
         # Based on checkboxes selected
-        if (switches[0] == 1):
-            # Visual keyword
-            print("acoustic turned on")
+        if (AUDIO_ONLY):
+            # Audio ONLY
+            print("acoustic only")
+            final_venue = audio_results[self.query_videoname][0]
 
-        if (switches[1] == 1):
-            # Color Histogram
-            print("visual turned on")
+        if (VISUAL_ONLY):
+            # Visual ONLY - returns the list of possible venues in its umbrella group
+            print("visual only")
+            umbrella_group_venues = visual_results[self.query_videoname][1]
+        else:
+            umbrella_group_venues = ""
 
-        if (switches[2] == 1):
-            # Visual Concept (image only)
-            print("text turned on")
+        if (TEXT_ONLY):
+            # Text ONLY
+            print("text only")
+            final_venue = text_results[0]
 
-        return 0 # [final_venue, [list of umbrella group venues]]
+        if (AUDIO_AND_VISUAL_ONLY or AUDIO_AND_VISUAL_AND_TEXT):
+            # Acoustic and Visual turned on
+            print("acoustic and visual turned on")
+            umbrella_group_venues = visual_results[self.query_videoname][1]
+            for audio_venue in audio_results[self.query_videoname]:
+                if audio_venue in umbrella_group_venues:
+                    final_venue = audio_venue
+                    break
 
-
+        return [final_venue, umbrella_group_venues]
 
     """
     From Assignment 1
