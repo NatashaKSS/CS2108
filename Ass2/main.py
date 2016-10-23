@@ -86,8 +86,8 @@ class UI_class:
         self.Emel.pack()
         spacer4.pack()
 
-        label_visual.pack()
-        self.Evisual.pack()
+        #label_visual.pack()
+        #self.Evisual.pack()
 
         # Check buttons for ACOUSTIC, VISUAL AND TEXT features
         self.acoustic = IntVar()
