@@ -81,7 +81,7 @@ class QueryLogic:
         """
         # Default venues in case anything goes wrong
         final_venue = "Default" # Deprecated since they want top 3
-        final_venue_top_3 = ["Default", "top", "3"]
+        final_venue_top_3 = []
         umbrella_group_title = "Default"
         umbrella_group_venues = ['Default']
 
@@ -105,6 +105,7 @@ class QueryLogic:
             print("visual only")
             umbrella_group_title = visual_results[self.query_videoname][0]
             umbrella_group_venues = visual_results[self.query_videoname][1]
+            final_venue_top_3 = umbrella_group_venues[:3]
 
         if (TEXT_ONLY):
             # Text ONLY
@@ -117,6 +118,7 @@ class QueryLogic:
             print("visual and text only")
             umbrella_group_title = visual_results[self.query_videoname][0]
             umbrella_group_venues = visual_results[self.query_videoname][1]
+            final_venue_top_3 = umbrella_group_venues[:3]
 
         if (AUDIO_AND_TEXT_ONLY):
             print("audio and text only")
@@ -131,12 +133,24 @@ class QueryLogic:
             umbrella_group_venues = visual_results[self.query_videoname][1]
 
             # Note: Visual returns null, then just return the top result of acoustic
-            final_venue = audio_results[self.query_videoname][0]
-            for audio_venue in audio_results[self.query_videoname]:
+            audio_ranked_list = audio_results[self.query_videoname]
+            for audio_venue in audio_ranked_list:
                 if audio_venue in umbrella_group_venues:
-                    final_venue = audio_venue
-                    break
-        print(final_venue_top_3)
+                    final_venue_top_3.append(audio_venue)
+
+        # If the Visual umbrella group does not contain enough venues to fill
+        # the top 3, select from audio's ranked list
+        if (not len(final_venue_top_3) == 3):
+            for audio_venue in audio_results[self.query_videoname]:
+                if not audio_venue in final_venue_top_3:
+                    if (len(final_venue_top_3) == 3):
+                        break
+                    else:
+                        final_venue_top_3.append(audio_venue)
+
+        print("Top 3 results: " + str(final_venue_top_3) + "\n")
+        print("Audio results: " + str(audio_results[self.query_videoname]) + "\n")
+        print("Text results: " + str(text_results) + "\n")
         return [final_venue_top_3, umbrella_group_venues, umbrella_group_title]
 
     """
