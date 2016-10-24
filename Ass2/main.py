@@ -179,7 +179,8 @@ class UI_class:
         if self.columns == 0:
             print("Please extract the key frames for the selected video first!!!")
         else:
-            final_venue = results[0]
+            final_venue = results[0] # Deprecated since they want top 3
+            final_venue_top_3 = results[0]
             umbrella_group_venues = results[1]
             umbrella_group_title = results[2]
 
@@ -188,8 +189,10 @@ class UI_class:
             draw = ImageDraw.Draw(venue_img)
 
             # Draw final venue text
-            font = ImageFont.truetype("Avenir.otf",size=66)
-            draw.text((50,50), final_venue, (0, 0, 0), font=font)
+            font = ImageFont.truetype("Avenir.otf",size=45)
+            draw.text((20,10), final_venue_top_3[0], (100, 0, 0), font=font)
+            draw.text((20,65), final_venue_top_3[1], (0, 100, 0), font=font)
+            draw.text((20,120), final_venue_top_3[2], (0, 0, 100), font=font)
 
             # Draw suggested umbrella_group_venues
             if (self.umbrella_displayed_already):
