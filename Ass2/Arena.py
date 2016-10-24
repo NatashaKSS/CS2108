@@ -70,3 +70,8 @@ venueDic['airport'] = [
 	'Airport'
 ]
 
+venueDic['null'] = [
+	'Face',
+	'Null Result'
+]
+

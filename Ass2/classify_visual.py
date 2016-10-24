@@ -19,11 +19,11 @@ image_path5 = framePath + '-frame4.jpg'
 def allValidationRead(image_address):
     image_set = []
     result = []
+    print (image_address)
     for i in range(5):
         image_name = image_address + '-frame' + str(i) + '.jpg'
-        print (image_name)
         image_set.append(image_name)
-    result = searchAllImage(image_set)
+    result = run_visual_classifier(image_set)
     return result[0]
 
 def searchAllImage(image_list):
@@ -34,11 +34,11 @@ def searchAllImage(image_list):
             best = result
     print (best)
     return best
-def run_visual_classifier(image_path):
+def run_visual_classifier(image_list):
 
     # Read in the image_data
     result = []
-    image_data = tf.gfile.FastGFile(image_path, 'rb').read()
+    best = ["null", -1]
 
     # Loads label file, strips off carriage return
     label_lines = [line.rstrip() for line 
@@ -49,31 +49,45 @@ def run_visual_classifier(image_path):
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')
+    for image_path in image_list:
+        image_data = tf.gfile.FastGFile(image_path, 'rb').read()
+        with tf.Session() as sess:
+            # Feed the image_data as input to the graph and get first prediction
+            softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
+            
+            predictions = sess.run(softmax_tensor, \
+                     {'DecodeJpeg/contents:0': image_data})
+            
+            # Sort to show labels of first prediction in order of confidence
+            top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
 
-    with tf.Session() as sess:
-        # Feed the image_data as input to the graph and get first prediction
-        softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
-        
-        predictions = sess.run(softmax_tensor, \
-                 {'DecodeJpeg/contents:0': image_data})
-        
-        # Sort to show labels of first prediction in order of confidence
-        top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
-
-        #thefile = open('visualMatch.txt', 'w')##a2
-        for node_id in top_k:
-            human_string = label_lines[node_id]
-            score = predictions[0][node_id]
-            #print('%s (score = %.5f)' % (human_string, score))
-            element = [human_string, score]
-            result.append(element)
-        #np.savetxt('visualMatch.txt', top_k)##a2
-        print ('best valid search', result[0])
-        return result[0]
-    return result[0]
+            #thefile = open('visualMatch.txt', 'w')##a2
+            for node_id in top_k:
+                human_string = label_lines[node_id]
+                score = predictions[0][node_id]
+                #print('%s (score = %.5f)' % (human_string, score))
+                element = [human_string, score]
+                result.append(element)
+            #np.savetxt('visualMatch.txt', top_k)##a2
+            print ('best valid search', result[0])
+        output_sample = result[0]
+        if (best[1] < output_sample[1] and (output_sample[0] != 'face null')):
+            best = output_sample
+        print (best)
+        return best
 def printDict(dictionary):
+    '''
     for i in dictionary:
         print (i, " : ", dictionary[i])
+    '''
+    string = ""
+    if (len(dictionary)%10 == 0):
+        string = "["
+        for i in dictionary:
+            string = string +  str(i) + " , "
+        string = string + " ] "
+    print('Total so far = ', len(dictionary))
+    print (string)
 # MAIN=======================================
 
   
@@ -91,26 +105,32 @@ def load():
         valids = {}
     else:
         valids = pickle.load( open( "save.txt", "rb" ))##a2    
-    print ('loaded valid')
-    printDict(valids)
+    #print ('loaded valid')
     return valids
 
 
 
-def runVisualClassifier(framePath, name, type):
+def runVisualClassifier(framePath, name, type, limit):
     venueDic = ArenaData.getDic()
     if (framePath != '-1'):
         validsGlobal = load()
-        print('searching if file is in', not (name in validsGlobal))
+        if (len(validsGlobal) == limit):
+            return True
+        #print('searching if file is in', not (name in validsGlobal))
         if not (name in validsGlobal):
+            #print('loaded and preparing to search\n')
+            printDict(validsGlobal)
             result = allValidationRead(framePath)
             print ('possible places', venueDic[result])
             value = [result, venueDic[result]]
             validsGlobal[name] = value
+            #print('searched and preparing to save\n')
+            printDict(validsGlobal)
             save(validsGlobal)
+        
+    return False
 def save(validPickle):
     print ("SAVING ")
-    printDict(validPickle)
     open( "save.txt", "wb" ).close()
     pickle.dump(validPickle, open( "save.txt", "wb" ) )##a2
 
