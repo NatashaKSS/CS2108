@@ -14,7 +14,7 @@ from sklearn.metrics import log_loss
 Load training set
 """
 data_train_path = \
-    './deeplearning/feature/acoustic/MFCC/NEW_data_train_MFCC_only_300.txt'
+    './deeplearning/feature/acoustic/data_train_ALL_300_concat.txt'
 data_train = []
 with open(data_train_path, 'r') as from_training_data_file:
     data_train = json.load(from_training_data_file)
@@ -32,7 +32,7 @@ for sample in data_train:
 Load validation set
 """
 data_test_path = \
-    './deeplearning/feature/acoustic/MFCC/NEW_data_test_MFCC_only_300.txt'
+    './deeplearning/feature/acoustic/data_test_ALL_300_concat.txt'
 data_test = []
 with open(data_test_path, 'r') as from_test_data_file:
     data_test = json.load(from_test_data_file)

@@ -14,7 +14,7 @@ from sklearn.metrics import log_loss
 """
 Load training set
 """
-data_train_path = './deeplearning/feature/acoustic/Mel/data_train_spect_only_200_NEW.txt'
+data_train_path = './deeplearning/feature/acoustic/data_train_ALL_300_concat.txt'
 data_train = []
 with open(data_train_path, 'r') as from_training_data_file:
     data_train = json.load(from_training_data_file)
@@ -31,7 +31,7 @@ for sample in data_train:
 """
 Load validation set
 """
-data_test_path = './deeplearning/feature/acoustic/Mel/data_test_spect_only_200_NEW.txt'
+data_test_path = './deeplearning/feature/acoustic/data_test_ALL_300_concat.txt'
 data_test = []
 with open(data_test_path, 'r') as from_test_data_file:
     data_test = json.load(from_test_data_file)
@@ -55,7 +55,7 @@ Train our model using...
 GMM
 and Evaluate on validation set
 
-REMEMBER TO CHANGE THE OUTPUT FILE NAME AT LINE 72. n100 (the portion at the
+REMEMBER TO CHANGE THE OUTPUT FILE NAME. n100 (the portion at the
 back of the name is n_estimators)
 """
 # multi_class_classifier = mixture.GMM(n_components=25).fit(X_train, y_train)
@@ -74,16 +74,15 @@ test_prediction = multi_class_classifier.predict(X_test)
 print(test_prediction, len(test_prediction))
 
 # Export and save the model for future use so you don't need to train again
-joblib.dump(multi_class_classifier, 'model.pkl', compress=9)
+# joblib.dump(multi_class_classifier, 'model.pkl', compress=9)
 
 # Evaluate on Test set - Results written to disk
 # Output classification_report and accuracy in-sample and out-of-sample
-"""
 check_output_file = open(data_test_path + '-scores-forests-n500.txt', 'w')
 check_output_file.write(str(multi_class_classifier.score(X_test, y_test)))
 check_output_file.write(classification_report(y_test, test_prediction, target_names=None))
 check_output_file.close()
-
+"""
 check_output_file = open('output_predict_probab.txt', 'w')
 check_output_file.write("\n")
 check_output_file.write(str(list(multi_class_classifier.predict_proba(X_test))))
