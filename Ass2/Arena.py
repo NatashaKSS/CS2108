@@ -42,7 +42,8 @@ venueDic['mall'] = [
 	'Entertainment',
 	'Other Outdoors',
 	'Airport',
-	'Other - Buildings'
+	'Other - Buildings',
+	'City'
 ]
 
 venueDic['outdoor scenary'] = [
@@ -53,17 +54,19 @@ venueDic['outdoor scenary'] = [
 	'Other - Buildings'
 ]
 
-venueDic['public spaces'] = [
+venueDic['public spaces'] = [#
 	'Park',
 	'Plaza or Square',
 	'Neighborhood',
 	'Travel',
-	'Other - Buildings'
+	'Theme Park',
+	'Other - Buildings',
+	'City'
+
 ]
 
-venueDic['theme park'] = [
-	'Theme Park',
-	'Resort'
+venueDic['theme park'] = [#
+	'Theme Park'
 ]	
 
 venueDic['airport'] = [
