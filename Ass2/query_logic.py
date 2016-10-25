@@ -66,8 +66,6 @@ class QueryLogic:
         # pickle load VISUAL results
         with open('save.txt', 'rb') as to_file:
             visual_results = pickle.load(to_file)
-        print("Visual Dict: ", visual_results)
-        print()
 
         # get TEXT results
         dataset_csv_path = 'vine-desc-training-results.txt'
@@ -77,21 +75,22 @@ class QueryLogic:
 
         comparator = CompareTextual(dataset_csv_path, input_csv_path, classification_path)
         text_results = self.get_text_sorted_venues(comparator.get_category(self.query_videoname, 100))
-        print("Text results: ", text_results)
-        print()
 
         """
         Adjust the parameters HERE!!
         """
         # Default venues in case anything goes wrong
-        final_venue = "Default"
+        final_venue = "Default" # Deprecated since they want top 3
+        final_venue_top_3 = []
         umbrella_group_title = "Default"
-        umbrella_group_venues = ['Default', 'Nightclub', 'Hockey', 'Theme Park', 'Rock Club', 'Concert Hall', 'Theme Park', 'Music Venue']
+        umbrella_group_venues = ['Default']
 
         AUDIO_ONLY = (switches[0] == 1) and (switches[1] == 0) and (switches[2] == 0)
         VISUAL_ONLY = (switches[0] == 0) and (switches[1] == 1) and (switches[2] == 0)
         TEXT_ONLY = (switches[0] == 0) and (switches[1] == 0) and (switches[2] == 1)
         AUDIO_AND_VISUAL_ONLY = (switches[0] == 1) and (switches[1] == 1) and (switches[2] == 0)
+        AUDIO_AND_TEXT_ONLY = (switches[0] == 1) and (switches[1] == 0) and (switches[2] == 1)
+        VISUAL_AND_TEXT_ONLY = (switches[0] == 0) and (switches[1] == 1) and (switches[2] == 1)
         AUDIO_AND_VISUAL_AND_TEXT = (switches[0] == 1) and (switches[1] == 1) and (switches[2] == 1)
 
         # Based on checkboxes selected
@@ -99,20 +98,34 @@ class QueryLogic:
             # Audio ONLY
             print("acoustic only")
             final_venue = audio_results[self.query_videoname][0]
+            final_venue_top_3 = audio_results[self.query_videoname][:3]
 
         if (VISUAL_ONLY):
             # Visual ONLY - returns the list of possible venues in its umbrella group
             print("visual only")
             umbrella_group_title = visual_results[self.query_videoname][0]
             umbrella_group_venues = visual_results[self.query_videoname][1]
-        else:
-            umbrella_group_venues = ""
+            final_venue_top_3 = umbrella_group_venues[:3]
 
         if (TEXT_ONLY):
             # Text ONLY
             print("text only")
             final_venue = text_results[0]
+            final_venue_top_3 = text_results[:3]
 
+        # TODO REMEMBER TO EDIT
+        if (VISUAL_AND_TEXT_ONLY):
+            print("visual and text only")
+            umbrella_group_title = visual_results[self.query_videoname][0]
+            umbrella_group_venues = visual_results[self.query_videoname][1]
+            final_venue_top_3 = umbrella_group_venues[:3]
+
+        if (AUDIO_AND_TEXT_ONLY):
+            print("audio and text only")
+            final_venue = audio_results[self.query_videoname][0]
+            final_venue_top_3 = audio_results[self.query_videoname][:3]
+
+        # TODO REMEMBER TO EDIT
         if (AUDIO_AND_VISUAL_ONLY or AUDIO_AND_VISUAL_AND_TEXT):
             # Acoustic and Visual turned on
             print("acoustic and visual turned on")
@@ -120,13 +133,25 @@ class QueryLogic:
             umbrella_group_venues = visual_results[self.query_videoname][1]
 
             # Note: Visual returns null, then just return the top result of acoustic
-            final_venue = audio_results[self.query_videoname][0]
-            for audio_venue in audio_results[self.query_videoname]:
+            audio_ranked_list = audio_results[self.query_videoname]
+            for audio_venue in audio_ranked_list:
                 if audio_venue in umbrella_group_venues:
-                    final_venue = audio_venue
-                    break
+                    final_venue_top_3.append(audio_venue)
 
-        return [final_venue, umbrella_group_venues, umbrella_group_title]
+        # If the Visual umbrella group does not contain enough venues to fill
+        # the top 3, select from audio's ranked list
+        if (not len(final_venue_top_3) == 3):
+            for audio_venue in audio_results[self.query_videoname]:
+                if not audio_venue in final_venue_top_3:
+                    if (len(final_venue_top_3) == 3):
+                        break
+                    else:
+                        final_venue_top_3.append(audio_venue)
+
+        print("Top 3 results: " + str(final_venue_top_3) + "\n")
+        print("Audio results: " + str(audio_results[self.query_videoname]) + "\n")
+        print("Text results: " + str(text_results) + "\n")
+        return [final_venue_top_3, umbrella_group_venues, umbrella_group_title]
 
     """
     From Assignment 1
