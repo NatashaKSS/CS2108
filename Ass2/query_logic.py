@@ -68,8 +68,8 @@ class QueryLogic:
             visual_results = pickle.load(to_file)
 
         # get TEXT results
-        dataset_csv_path = 'vine-desc-training-results.txt'
-        input_csv_path = 'vine-desc-validation-results.txt'
+        dataset_csv_path = './deeplearning/featureextracting/textual/vine-desc-training-results.txt'
+        input_csv_path = './deeplearning/featureextracting/textual/vine-desc-validation-results.txt'
         classification_path = 'vine-venue-training.txt'
         input_classification_path = 'vine-venue-validation.txt'
 

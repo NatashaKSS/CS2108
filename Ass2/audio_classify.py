@@ -57,7 +57,7 @@ def get_ranked_venues(X_name_and_features):
 """
 Load validation set
 """
-data_test_path = './deeplearning/feature/acoustic/Mel/data_test_spect_only_300_NEW.txt'
+data_test_path = './deeplearning/feature/acoustic/demo.txt'
 data_test = []
 with open(data_test_path, 'r') as from_test_data_file:
     data_test = json.load(from_test_data_file)

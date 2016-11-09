@@ -17,6 +17,8 @@ class CompareTextual:
     def __init__(self, dataset_csv_path, input_csv_path, classification_path):
         self.dataset_dict = self.getCsv(dataset_csv_path)
         self.input_dict = self.getCsv(input_csv_path)
+        with open("try.txt", "w") as f:
+            f.write(str(self.input_dict))
         self.classi_dict = self.get_dataset_classification(classification_path)
 
     def getCsv(self, csv_path):

@@ -140,14 +140,14 @@ if __name__ == '__main__':
     Note:
     YOU CAN CHANGE FILE PATHS FOR THIS PROGRAM HERE...
     """
-    audio_path = "../../data/audio_adrian/" # Note, must end with the slash
+    audio_path = "../../data/audio_FINAL/" # Note, must end with the slash
     list_of_audio_names = os.listdir(audio_path)
     print(list_of_audio_names, len(list_of_audio_names))
 
-    load_video_classification_path = "../../../vine-venue-training.txt"
-    # load_video_classification_path = "../../../vine-venue-validation.txt"
+    # load_video_classification_path = "../../../vine-venue-training.txt"
+    load_video_classification_path = "../../../vine-venue-validation.txt"
 
-    save_all_audio_feature_vectors_path = "data_train_ALL_300_concat.txt"
+    save_all_audio_feature_vectors_path = "demo.txt" # concat something bla bla
     """
     END OF FILE PATH PARAMS TO CHANGE
     """
