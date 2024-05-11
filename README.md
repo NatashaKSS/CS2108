@@ -1,2 +1,3 @@
-# CS2108Assg1
-CS2108 Assignment 1 Image Search System
+# Multimedia Search Engine Exploration
+
+Part of CS2108 Assignment - Image Search System
